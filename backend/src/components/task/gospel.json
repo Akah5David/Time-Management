@@ -1,0 +1,16 @@
+{
+  "collectionName": "components_task_gospels",
+  "info": {
+    "displayName": "Gospel",
+    "icon": "clock"
+  },
+  "options": {},
+  "attributes": {
+    "titile": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    }
+  },
+  "config": {}
+}

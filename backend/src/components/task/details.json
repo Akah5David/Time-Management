@@ -1,0 +1,17 @@
+{
+  "collectionName": "components_task_details",
+  "info": {
+    "displayName": "Details"
+  },
+  "options": {},
+  "attributes": {
+    "description": {
+      "type": "text",
+      "required": false
+    },
+    "age": {
+      "type": "string"
+    }
+  },
+  "config": {}
+}

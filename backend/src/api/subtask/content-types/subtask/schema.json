@@ -1,0 +1,43 @@
+{
+  "kind": "collectionType",
+  "collectionName": "subtasks",
+  "info": {
+    "singularName": "subtask",
+    "pluralName": "subtasks",
+    "displayName": "Subtask"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {
+    "i18n": {
+      "localized": true
+    }
+  },
+  "attributes": {
+    "title": {
+      "type": "string",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      },
+      "required": true,
+      "unique": true
+    },
+    "completed": {
+      "type": "boolean",
+      "pluginOptions": {
+        "i18n": {
+          "localized": true
+        }
+      }
+    },
+    "task": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "api::task.task",
+      "inversedBy": "subtasks"
+    }
+  }
+}

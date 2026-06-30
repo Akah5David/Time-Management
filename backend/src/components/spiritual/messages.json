@@ -1,0 +1,21 @@
+{
+  "collectionName": "components_spiritual_messages",
+  "info": {
+    "displayName": "Messages",
+    "icon": "emotionUnhappy"
+  },
+  "options": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "unique": false
+    },
+    "preacher": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    }
+  },
+  "config": {}
+}
