@@ -4,7 +4,7 @@ import { useState, useRef } from "react";
 import ProjectScheduling from "../former-components/ProjectScheduling.jsx";
 import SideBar from "../former-components/SideBar.jsx";
 import NewProject from "../former-components/NewProject.jsx";
-import Project from "../pages/CreateProject.jsx";
+import Project from "../pages/Projects/CreateProject.jsx";
 import SelectedProject from "../former-components/selectedProject.jsx";
 
 export default function Main() {

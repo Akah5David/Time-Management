@@ -1,7 +1,7 @@
 import Input from "./Input.jsx";
 import { useRef, useState } from "react";
 import Modal from "../reusable-components/Modal.jsx";
-import Project from "../pages/CreateProject.jsx";
+
 
 function NewProject({ onAdd, onCancel }) {
   const dialog = useRef();

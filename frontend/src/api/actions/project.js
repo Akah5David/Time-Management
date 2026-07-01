@@ -4,7 +4,7 @@ let createProject = async ({ request }) => {
   let formData = await request.formData();
 
   const data = Object.fromEntries(formData);
-  
+
   console.log(import.meta.env.VITE_STRAPI_BASE_URL);
 
   try {
@@ -30,9 +30,9 @@ let createProject = async ({ request }) => {
 
     const result = await response.json();
 
-    console.log(result);
+    console.log("Action Result: ", result);
 
-    return redirect("/");
+    return redirect("/projects");
   } catch (error) {
     throw error;
   }

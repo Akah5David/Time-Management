@@ -5,7 +5,7 @@ import { useNavigate, Outlet } from "react-router-dom";
 import ProjectScheduling from "../former-components/ProjectScheduling.jsx";
 import SideBar from "../former-components/SideBar.jsx";
 import NewProject from "../former-components/NewProject.jsx";
-import Project from "../pages/CreateProject.jsx";
+import Project from "../pages/Projects/CreateProject.jsx";
 import SelectedProject from "../former-components/selectedProject.jsx";
 import Main from "../components/Main.jsx";
 import Modal from "../reusable-components/Modal.jsx";
