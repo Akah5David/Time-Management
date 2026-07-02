@@ -19,7 +19,7 @@ module.exports = createCoreController(
       console.log("reminderbody: ", reminderbody);
 
       const newReminders = await strapi
-        .service("api::project.project")
+        .service("api::reminder.reminder")
         .createNewProject(reminderbody);
 
       ctx.body = newReminders;

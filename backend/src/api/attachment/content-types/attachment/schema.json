@@ -31,7 +31,7 @@
       "target": "api::task.task",
       "inversedBy": "attachments"
     },
-    "file": {
+    "attachmentFiles": {
       "type": "media",
       "pluginOptions": {
         "i18n": {

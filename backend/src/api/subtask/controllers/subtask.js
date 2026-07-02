@@ -15,7 +15,7 @@ module.exports = createCoreController('api::subtask.subtask', ({ strapi }) => ({
     const taskBody = ctx.request.body;
 
     const result = await strapi
-      .service("api::project.project")
+      .service("api::subtask.subtask")
       .createSubtask(taskBody);
 
     ctx.body = result;
@@ -26,7 +26,7 @@ module.exports = createCoreController('api::subtask.subtask', ({ strapi }) => ({
 
     console.log(ctx);
 
-    const result = await strapi.service("api::project.project").fetchSubTasks();
+    const result = await strapi.service("api::subtask.subtask").fetchSubTasks();
 
     ctx.body = result;
   },
@@ -38,7 +38,7 @@ module.exports = createCoreController('api::subtask.subtask', ({ strapi }) => ({
     let taskId = ctx.params.id;
 
     const result = await strapi
-      .service("api::project.project")
+      .service("api::subtask.subtask")
       .fetchSubTask(taskId);
 
     ctx.body = result;

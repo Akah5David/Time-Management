@@ -14,7 +14,7 @@
       "name": "Apache 2.0",
       "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "x-generation-date": "2026-07-01T08:34:19.076Z"
+    "x-generation-date": "2026-07-02T10:38:38.451Z"
   },
   "x-strapi-config": {
     "plugins": [
@@ -5797,7 +5797,7 @@
                 ],
                 "example": "string or id"
               },
-              "file": {
+              "attachmentFiles": {
                 "type": "array",
                 "items": {
                   "oneOf": [
@@ -5984,7 +5984,7 @@
                         }
                       }
                     },
-                    "file": {
+                    "attachmentFiles": {
                       "type": "array",
                       "items": {
                         "type": "object",
@@ -8217,7 +8217,7 @@
               }
             }
           },
-          "file": {
+          "attachmentFiles": {
             "type": "array",
             "items": {
               "type": "object",
@@ -8778,7 +8778,7 @@
                           }
                         }
                       },
-                      "file": {
+                      "attachmentFiles": {
                         "type": "array",
                         "items": {
                           "type": "object",
@@ -11384,7 +11384,7 @@
                           }
                         }
                       },
-                      "file": {
+                      "attachmentFiles": {
                         "type": "array",
                         "items": {
                           "type": "object",
@@ -13928,7 +13928,7 @@
                         }
                       }
                     },
-                    "file": {
+                    "attachmentFiles": {
                       "type": "array",
                       "items": {
                         "type": "object",
@@ -16451,7 +16451,7 @@
                         }
                       }
                     },
-                    "file": {
+                    "attachmentFiles": {
                       "type": "array",
                       "items": {
                         "type": "object",
@@ -20833,7 +20833,7 @@
                     }
                   }
                 },
-                "file": {
+                "attachmentFiles": {
                   "type": "array",
                   "items": {
                     "type": "object",
