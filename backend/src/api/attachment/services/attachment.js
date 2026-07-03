@@ -9,19 +9,16 @@ const { createCoreService } = require("@strapi/strapi").factories;
 module.exports = createCoreService(
   "api::attachment.attachment",
   ({ strapi }) => ({
-    async createAttachment(ctx) {
+    async createAttachment(body, files) {
       console.log(
         "===============Started running service createAttachment==============",
       );
 
-      const { body, files } = ctx.request;
-
-      console.log("createAttachment service ctx: ", body, files);
+      console.log("createAttachment service body/files: ", body, files);
 
       try {
         // Upload a file
-
-        let uploadedAttachmentFiles = null;
+        let uploadedAttachmentFiles = [];
 
         if (files?.attachmentFiles) {
           uploadedAttachmentFiles = await strapi
@@ -33,16 +30,16 @@ module.exports = createCoreService(
             });
         }
 
-        console.log("uploadedAttachmentFiles: ", uploadedAttachmentFiles);
-
-        //create Attachment
+        const attachmentFileIds = uploadedAttachmentFiles.map(
+          (file) => file.id,
+        );
 
         const createdAttachment = await strapi
           .documents("api::attachment.attachment")
           .create({
             data: {
               name: body.name,
-              attachmentFiles: uploadedAttachmentFiles.map((file) => file.id),
+              attachmentFiles: attachmentFileIds,
             },
             locale: "en",
             status: "published",
@@ -53,7 +50,7 @@ module.exports = createCoreService(
           });
 
         if (!createdAttachment) {
-          throw new Error("Fail to fetch Attachments");
+          throw new Error("Fail to create Attachment");
         }
 
         return createdAttachment;
@@ -67,7 +64,6 @@ module.exports = createCoreService(
       console.log(
         "===============Started running service fetchAttachments==============",
       );
-      print;
       try {
         const fetchedAttachments = await strapi
           .documents("api::attachment.attachment")
@@ -89,20 +85,18 @@ module.exports = createCoreService(
       }
     },
 
-    async fetchAttachment(ctx) {
+    async fetchAttachment(documentId) {
       console.log(
         "===============Started running service fetchAttachment==============",
       );
 
-      const attachmentId = ctx.params.id;
-
-      console.log("attachmentId: ", attachmentId);
+      console.log("attachment documentId: ", documentId);
 
       try {
         const fetchedAttachment = await strapi
           .documents("api::attachment.attachment")
           .findOne({
-            documentId: attachmentId,
+            documentId,
             locale: "en",
             status: "published",
             populate: ["task", "attachmentFiles"],
@@ -115,20 +109,15 @@ module.exports = createCoreService(
         throw err;
       }
     },
-    async updateAttachment(ctx) {
+    async updateAttachment(documentId, body, files) {
       console.log(
         "===============Started running service updateAttachment==============",
       );
 
-      const { body, files } = ctx.request;
-      const attachmentId = ctx.params.id;
-
-      console.log("createAttachment service ctx: ", body, files);
+      console.log("updateAttachment service body/files: ", body, files);
 
       try {
-        // Upload a file
-
-        let uploadedAttachmentFiles = null;
+        let uploadedAttachmentFiles = [];
 
         if (files?.attachmentFiles) {
           uploadedAttachmentFiles = await strapi
@@ -140,17 +129,17 @@ module.exports = createCoreService(
             });
         }
 
-        console.log("uploadedAttachmentFiles: ", uploadedAttachmentFiles);
-
-        //create Attachment
+        const attachmentFileIds = uploadedAttachmentFiles.map(
+          (file) => file.id,
+        );
 
         const updatedAttachment = await strapi
           .documents("api::attachment.attachment")
           .update({
-            documentId: attachmentId,
+            documentId,
             data: {
               name: body.name,
-              attachmentFiles: uploadedAttachmentFiles.map((file) => file.id),
+              attachmentFiles: attachmentFileIds,
             },
             locale: "en",
             status: "published",
@@ -161,29 +150,26 @@ module.exports = createCoreService(
           });
 
         if (!updatedAttachment) {
-          throw new Error("Fail to update Attachments");
+          throw new Error("Fail to update Attachment");
         }
 
         return updatedAttachment;
       } catch (err) {
-        console.error("createAttachment Service error message: ", err);
+        console.error("updateAttachment Service error message: ", err);
 
         throw err;
       }
     },
-    async deleteAttachment(ctx) {
+    async deleteAttachment(documentId) {
       console.log(
         "===============Started running service deleteAttachment==============",
       );
 
-      const attachmentId = ctx.params.id;
-
       try {
-        //fetch attachment document with doucmentId equals attachmentId
         const fetchedAttachment = await strapi
           .documents("api::attachment.attachment")
           .findOne({
-            documentId: attachmentId,
+            documentId,
             populate: ["attachmentFiles"],
           });
 
@@ -191,7 +177,6 @@ module.exports = createCoreService(
           throw new Error("Fail to fetch Attachment");
         }
 
-        // fetch all attachment documents
         const fetchedAttachments = await strapi
           .documents("api::attachment.attachment")
           .findMany({
@@ -202,20 +187,14 @@ module.exports = createCoreService(
           throw new Error("Fail to fetch all Attachments");
         }
 
-        // checks if every media in fetchedAttachment.attachmentFiles array is used
-        // by other attachment attachmentFiles before deleting that media
         for (const media of fetchedAttachment.attachmentFiles) {
-          // Assume this media is not referenced anywhere else
           let isReferenced = false;
 
-          // Check every attachment in fetchedAttachments
           for (const attachment of fetchedAttachments) {
-            // Skip the attachment we're deleting
-            if (attachment.documentId === attachmentId) {
+            if (attachment.documentId === documentId) {
               continue;
             }
 
-            // Check every media inside this attachment
             for (const mediafile of attachment.attachmentFiles) {
               if (mediafile.id === media.id) {
                 isReferenced = true;
@@ -229,27 +208,24 @@ module.exports = createCoreService(
           }
 
           if (!isReferenced) {
-            //remove media from media library
             await strapi.plugin("upload").service("upload").remove(media);
           }
         }
 
-        //delete Attachment document
-
         const deletedAttachment = await strapi
           .documents("api::attachment.attachment")
           .delete({
-            documentId: attachmentId,
+            documentId,
             locale: "en",
           });
 
         if (!deletedAttachment) {
-          throw new Error("Fail to delete Attachments");
+          throw new Error("Fail to delete Attachment");
         }
 
         return deletedAttachment;
       } catch (err) {
-        console.error("deletedAttachment Service error message: ", err);
+        console.error("deleteAttachment Service error message: ", err);
 
         throw err;
       }
@@ -304,58 +280,3 @@ module.exports = createCoreService(
     },
   }),
 );
-
-//fetch attachment document with doucmentId equals attachmentId
-const fetchedAttachment = await strapi
-  .documents("api::attachment.attachment")
-  .findOne({
-    documentId: attachmentId,
-    populate: ["attachmentFiles"],
-  });
-
-if (!fetchedAttachment) {
-  throw new Error("Fail to fetch Attachment");
-}
-
-// fetch all attachment documents
-const fetchedAttachments = await strapi
-  .documents("api::attachment.attachment")
-  .findMany({
-    populate: ["attachmentFiles"],
-  });
-
-if (!fetchedAttachments) {
-  throw new Error("Fail to fetch all Attachments");
-}
-
-// checks if every media in fetchedAttachment.attachmentFiles array is used
-// by other attachment attachmentFiles before deleting that media
-for (const media of fetchedAttachment.attachmentFiles) {
-  // Assume this media is not referenced anywhere else
-  let isReferenced = false;
-
-  // Check every attachment in fetchedAttachments
-  for (const attachment of fetchedAttachments) {
-    // Skip the attachment we're deleting
-    if (attachment.documentId === attachmentId) {
-      continue;
-    }
-
-    // Check every media inside this attachment
-    for (const mediafile of attachment.attachmentFiles) {
-      if (mediafile.id === media.id) {
-        isReferenced = true;
-        break;
-      }
-    }
-
-    if (isReferenced) {
-      break;
-    }
-  }
-
-  if (!isReferenced) {
-    //remove media from media library
-    await strapi.plugin("upload").service("upload").remove(media);
-  }
-}

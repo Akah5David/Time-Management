@@ -14,12 +14,12 @@ module.exports = createCoreController(
         "===============Started running createAttachment==============",
       );
 
-      console.log("ctx content: ", ctx);
+      const { body, files } = ctx.request;
 
       try {
         let createdAttachment = await strapi
           .service("api::attachment.attachment")
-          .createAttachment(ctx);
+          .createAttachment(body, files);
 
         if (!createdAttachment) {
           throw new Error("Failed to create an Attachment");
@@ -60,12 +60,12 @@ module.exports = createCoreController(
         "===============Started running fetchAttachment==============",
       );
 
-      console.log("ctx content: ", ctx);
+      const { documentId } = ctx.params;
 
       try {
         let fetchedAttachment = await strapi
           .service("api::attachment.attachment")
-          .fetchAttachment(ctx);
+          .fetchAttachment(documentId);
 
         if (!fetchedAttachment) {
           throw new Error("Failed to fetch an Attachment");
@@ -84,12 +84,13 @@ module.exports = createCoreController(
         "===============Started running updateAttachment==============",
       );
 
-      console.log("ctx content: ", ctx);
+      const { documentId } = ctx.params;
+      const { body, files } = ctx.request;
 
       try {
         let updatedAttachment = await strapi
           .service("api::attachment.attachment")
-          .updateAttachment(ctx);
+          .updateAttachment(documentId, body, files);
 
         if (!updatedAttachment) {
           throw new Error("Failed to update an Attachment");
@@ -99,6 +100,29 @@ module.exports = createCoreController(
         ctx.body = updatedAttachment;
       } catch (err) {
         console.error("updateAttachment Error Message: ", err);
+
+        throw err;
+      }
+    },
+    async deleteAttachment(ctx) {
+      console.log(
+        "===============Started running deleteAttachment==============",
+      );
+
+      const { documentId } = ctx.params;
+
+      try {
+        let deletedAttachment = await strapi
+          .service("api::attachment.attachment")
+          .deleteAttachment(documentId);
+
+        if (!deletedAttachment) {
+          throw new Error("Failed to delete an Attachment");
+        }
+
+        ctx.body = deletedAttachment;
+      } catch (err) {
+        console.error("deleteAttachment Error Message: ", err);
 
         throw err;
       }
