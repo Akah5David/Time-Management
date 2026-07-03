@@ -22,14 +22,13 @@ module.exports = createCoreController(
           .createAttachment(body, files);
 
         if (!createdAttachment) {
-          throw new Error("Failed to create an Attachment");
+          return ctx.notFound("Failed to create an Attachment");
         }
 
         //returns createdLabel to the front end
         ctx.body = createdAttachment;
       } catch (err) {
-        console.error("createAttachment Error Message: ", err);
-
+        console.log("createAttachment Error Message", err);
         throw err;
       }
     },
@@ -44,13 +43,13 @@ module.exports = createCoreController(
           .fetchAttachments();
 
         if (fetchedAttachments.length === 0) {
-          throw new Error("Failed to fetch all Attachments");
+          return ctx.notFound("Failed to fetch all Attachments");
         }
 
         //returns createdLabel to the front end
         ctx.body = fetchedAttachments;
       } catch (err) {
-        console.error("fetchAttachments Error Message: ", err);
+        console.log("fetchAttachments Error Message", err);
 
         throw err;
       }
@@ -68,14 +67,13 @@ module.exports = createCoreController(
           .fetchAttachment(documentId);
 
         if (!fetchedAttachment) {
-          throw new Error("Failed to fetch an Attachment");
+          return ctx.notFound("Attachment not found");
         }
 
         //returns createdLabel to the front end
         ctx.body = fetchedAttachment;
       } catch (err) {
-        console.error("fetchAttachment Error Message: ", err);
-
+        console.log("fetchAttachment Error Message", err);
         throw err;
       }
     },
@@ -93,13 +91,13 @@ module.exports = createCoreController(
           .updateAttachment(documentId, body, files);
 
         if (!updatedAttachment) {
-          throw new Error("Failed to update an Attachment");
+          return ctx.notFound("Failed to update Attachment");
         }
 
         //returns createdLabel to the front end
         ctx.body = updatedAttachment;
       } catch (err) {
-        console.error("updateAttachment Error Message: ", err);
+        console.log("updateAttachment Error Message", err);
 
         throw err;
       }
@@ -117,12 +115,12 @@ module.exports = createCoreController(
           .deleteAttachment(documentId);
 
         if (!deletedAttachment) {
-          throw new Error("Failed to delete an Attachment");
+          return ctx.notFound("Failed to delete Attachment");
         }
 
         ctx.body = deletedAttachment;
       } catch (err) {
-        console.error("deleteAttachment Error Message: ", err);
+        console.log("deleteAttachment Error Message", err);
 
         throw err;
       }
@@ -138,14 +136,14 @@ module.exports = createCoreController(
           .service("api::attachment.attachment")
           .deleteAllAttachments();
 
-        if (!deletedAttachments) {
-          throw new Error("Failed to delete all Attachments");
+        if (deletedAttachments.length === 0) {
+          return ctx.notFound("Failed to delete all Attachments");
         }
 
         //returns createdLabel to the front end
         ctx.body = deletedAttachments;
       } catch (err) {
-        console.error("deleteAttachments Error Message: ", err);
+        console.log("deleteAllAttachments Error Message", err);
 
         throw err;
       }

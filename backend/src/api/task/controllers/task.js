@@ -8,20 +8,25 @@ const { createCoreController } = require("@strapi/strapi").factories;
 
 module.exports = createCoreController("api::task.task", ({ strapi }) => ({
   async createTask(ctx) {
-    console.log("CreatTask Running");
-
+    console.log("====== CONTROLLER HIT createTask ======");
     console.log(ctx);
 
-    const { body: taskBody } = ctx.request;
+    try {
+      const { body: taskBody } = ctx.request;
 
-    const result = await strapi.service("api::task.task").createTask(taskBody);
+      const result = await strapi
+        .service("api::task.task")
+        .createTask(taskBody);
 
-    ctx.body = result;
+      ctx.body = result;
+    } catch (err) {
+      console.log("createTask Error Message", err);
+      throw err;
+    }
   },
 
   async fetchTasks(ctx) {
-    console.log("fetchTasks Running");
-
+    console.log("====== CONTROLLER HIT fetchTasks ======");
     console.log(ctx);
 
     try {
@@ -32,30 +37,28 @@ module.exports = createCoreController("api::task.task", ({ strapi }) => ({
       }
       ctx.body = tasks;
     } catch (err) {
-      console.error("fetchTasks Controller Error Message: ", err);
+      console.log("fetchTasks Error Message", err);
 
       throw err;
     }
   },
   async fetchTask(ctx) {
-    console.log("fetchTask Running");
-
+    console.log("====== CONTROLLER HIT fetchTask ======");
     console.log(ctx);
 
-    const { documentId } = ctx.params;
     try {
+      const { documentId } = ctx.params;
       const result = await strapi
         .service("api::task.task")
         .fetchTask(documentId);
 
       if (!result) {
-        throw new Error("No Task exist");
+        return ctx.notFound("Task not found");
       }
 
       ctx.body = result;
     } catch (err) {
-      console.error("fetchTask Controller Error Message: ", err);
-
+      console.log("fetchTask Error Message", err);
       throw err;
     }
   },
@@ -76,8 +79,7 @@ module.exports = createCoreController("api::task.task", ({ strapi }) => ({
 
       ctx.body = result;
     } catch (err) {
-      console.error("updateTask Error Message: ", err);
-
+      console.log("updateTask Error Message", err);
       throw err;
     }
   },
@@ -97,7 +99,7 @@ module.exports = createCoreController("api::task.task", ({ strapi }) => ({
 
       ctx.body = result;
     } catch (err) {
-      console.error("deleteTask Error Message: ", err);
+      console.log("deleteTask Error Message", err);
 
       throw err;
     }
@@ -116,7 +118,7 @@ module.exports = createCoreController("api::task.task", ({ strapi }) => ({
 
       ctx.body = deletedAllTasks;
     } catch (err) {
-      console.error("deleteAllTasks Error Message: ", err);
+      console.log("deleteAllTasks Error Message", err);
 
       throw err;
     }

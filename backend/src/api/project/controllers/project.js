@@ -60,7 +60,7 @@ module.exports = createCoreController("api::project.project", ({ strapi }) => ({
         .fetchProject(documentId);
 
       if (!result) {
-        throw new Error("Failed to fetch project");
+        return ctx.notFound("Project not found");
       }
 
       ctx.body = result;
@@ -76,18 +76,20 @@ module.exports = createCoreController("api::project.project", ({ strapi }) => ({
       const { documentId } = ctx.params;
       const { body } = ctx.request;
 
+      console.log("documentID, body", documentId, body);
+
       const result = await strapi
         .service("api::project.project")
         .updateProject(documentId, body);
 
       if (!result) {
-        throw new Error("Failed to update project");
+        return ctx.notFound("Failed to update project");
       }
 
       //returns createdLabel to the front end
       ctx.body = result;
     } catch (err) {
-      console.error("updateProject Error Message: ", err);
+      console.log("updateProject Error Message", err);
 
       throw err;
     }
@@ -109,7 +111,7 @@ module.exports = createCoreController("api::project.project", ({ strapi }) => ({
       //returns createdLabel to the front end
       ctx.body = result;
     } catch (err) {
-      console.error("deleteProject Error Message: ", err);
+      console.log("deleteProject Error Message", err);
 
       throw err;
     }
@@ -131,7 +133,7 @@ module.exports = createCoreController("api::project.project", ({ strapi }) => ({
       //returns createdLabel to the front end
       ctx.body = deletedAllProjects;
     } catch (err) {
-      console.error("deleteAllProjects Error Message: ", err);
+      console.log("deleteAllProjects Error Message", err);
 
       throw err;
     }

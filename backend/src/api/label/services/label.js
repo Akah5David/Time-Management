@@ -7,12 +7,11 @@
 const { createCoreService } = require("@strapi/strapi").factories;
 
 module.exports = createCoreService("api::label.label", ({ strapi }) => ({
-  async createLabel(ctx) {
+  async createLabel(labelBody) {
     console.log(
       "===============Started running service createLabel==============",
     );
 
-    let labelBody = ctx.request.body;
     console.log("createLabel formBody", labelBody);
 
     try {
@@ -30,9 +29,9 @@ module.exports = createCoreService("api::label.label", ({ strapi }) => ({
 
       return createdLabel;
     } catch (err) {
-      console.error("createLable Service error message: ", err);
+      console.error("Original Error:", err);
 
-      throw err;
+      throw new Error("Failed to create a new label");
     }
   },
   async fetchLabels() {
@@ -55,23 +54,21 @@ module.exports = createCoreService("api::label.label", ({ strapi }) => ({
           sort: "name:asc",
         });
 
-      if (!fetchedLabels) {
-        throw new Error("Failed to fetch all labels");
+      if (fetchedLabels.length === 0) {
+        return [];
       }
 
       return fetchedLabels;
     } catch (err) {
-      console.error("fetchLabels Service error message: ", err);
+      console.error("Original Error:", err);
 
-      throw err;
+      throw new Error("Failed to fetch labels");
     }
   },
-  async fetchLabel(ctx) {
+  async fetchLabel(labelId) {
     console.log(
       "===============Started running service fetchLabel==============",
     );
-
-    const labelId = ctx.params.id;
 
     console.log("fetchLabel labelId: ", labelId);
 
@@ -90,23 +87,22 @@ module.exports = createCoreService("api::label.label", ({ strapi }) => ({
 
       return fetchedLabel;
     } catch (err) {
-      console.error("fetchLabel Service error message: ", err);
+      console.error("Original Error:", err);
 
-      throw err;
+      throw new Error("Failed to fetch label");
     }
   },
-  async updateLabel(ctx) {
+  async updateLabel(labelId, data) {
     console.log(
       "===============Started running service updateLabel==============",
     );
-
-    const labelId = ctx.params.id;
 
     console.log("updateLabel labelId: ", labelId);
 
     try {
       const updatedLabel = await strapi.documents("api::label.label").update({
         documentId: labelId,
+        data,
         fields: ["name", "color"],
         status: "published",
         populate: ["tasks", "users_permission_user"],
@@ -118,19 +114,17 @@ module.exports = createCoreService("api::label.label", ({ strapi }) => ({
 
       return updatedLabel;
     } catch (err) {
-      console.error("updateLabel Service error message: ", err);
+      console.error("Original Error:", err);
 
-      throw err;
+      throw new Error("Failed to update label");
     }
   },
-  async deleteLabel(ctx) {
+  async deleteLabel(labelId) {
     console.log(
       "===============Started running service deleteLabel==============",
     );
 
-    const labelId = ctx.params.id;
-
-    console.log("fetchLabel labelId: ", labelId);
+    console.log("deleteLabel labelId: ", labelId);
 
     try {
       const deletedLabel = await strapi.documents("api::label.label").delete({
@@ -138,14 +132,14 @@ module.exports = createCoreService("api::label.label", ({ strapi }) => ({
       });
 
       if (!deletedLabel) {
-        throw new Error("Failed to update label");
+        throw new Error("Failed to delete label");
       }
 
       return deletedLabel;
     } catch (err) {
-      console.error("deleteLabel Service error message: ", err);
+      console.error("Original Error:", err);
 
-      throw err;
+      throw new Error("Failed to delete label");
     }
   },
   async deleteAllLabels() {
@@ -154,19 +148,29 @@ module.exports = createCoreService("api::label.label", ({ strapi }) => ({
     );
 
     try {
-      const deletedLabels = await strapi
-        .documents("api::label.label")
-        .deleteMany();
+      const documents = await strapi.documents("api::label.label").findMany({
+        fields: ["documentId"],
+      });
 
-      if (!deletedLabels) {
-        throw new Error("Failed to update label");
+      if (documents.length === 0) {
+        return [];
+      }
+
+      const deletedLabels = [];
+
+      for (const document of documents) {
+        const deletedLabel = await strapi.documents("api::label.label").delete({
+          documentId: document.documentId,
+        });
+
+        deletedLabels.push(deletedLabel);
       }
 
       return deletedLabels;
     } catch (err) {
-      console.error("deleteAllLabels Service error message: ", err);
+      console.error("Original Error:", err);
 
-      throw err;
+      throw new Error("Failed to delete all labels");
     }
   },
 }));

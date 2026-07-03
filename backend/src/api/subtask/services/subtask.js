@@ -10,52 +10,67 @@ module.exports = createCoreService("api::subtask.subtask", ({ strapi }) => ({
   async createSubtask(formBody) {
     console.log("createTask Service is running");
 
-    const createdSubtask = await strapi
-      .documents("api::subtask.subtask")
-      .create({
-        data: formBody,
-        locale: "en",
-        fields: ["title", "completed"],
-        status: "draft",
-        populate: ["task"],
-      });
+    try {
+      const createdSubtask = await strapi
+        .documents("api::subtask.subtask")
+        .create({
+          data: formBody,
+          locale: "en",
+          fields: ["title", "completed"],
+          status: "draft",
+          populate: ["task"],
+        });
 
-    return createdSubtask;
+      return createdSubtask;
+    } catch (err) {
+      console.error("Original Error:", err);
+      throw new Error("Failed to create subtask");
+    }
   },
   async fetchSubTasks() {
     console.log("createTask Service is running");
 
-    const subtasks = await strapi.documents("api::subtask.subtask").findMany({
-      locale: "en",
-      fields: ["title", "completed"],
-      status: "draft",
-      populate: ["task"],
-      sort: "title:asc",
-      pagination: {
-        limit: 10,
-        start: 0,
-      },
-      filters: {
-        title: {
-          $startsWith: "b",
+    try {
+      const subtasks = await strapi.documents("api::subtask.subtask").findMany({
+        locale: "en",
+        fields: ["title", "completed"],
+        status: "draft",
+        populate: ["task"],
+        sort: "title:asc",
+        pagination: {
+          limit: 10,
+          start: 0,
         },
-      },
-    });
+        filters: {
+          title: {
+            $startsWith: "b",
+          },
+        },
+      });
 
-    return subtasks;
+      return subtasks;
+    } catch (err) {
+      console.error("Original Error:", err);
+      throw new Error("Failed to fetch subtasks");
+    }
   },
   async fetchSubTask(documentId) {
     console.log("fetchSubTask Service is running");
 
-    const subtask = await strapi.documents("api::subtask.subtask").findOne({
-      documentId: documentId,
-      locale: "en",
-      fields: ["title", "completed"],
-      status: "published",
-      populate: ["task"],
-    });
+    try {
+      const subtask = await strapi.documents("api::subtask.subtask").findOne({
+        documentId: documentId,
+        locale: "en",
+        fields: ["title", "completed"],
+        status: "published",
+        populate: ["task"],
+      });
 
-    return subtask;
+      return subtask;
+    } catch (err) {
+      console.error("Original Error:", err);
+      throw new Error("Failed to fetch subtask");
+    }
   },
   async updateSubtask(documentId, data) {
     console.log(
@@ -81,9 +96,9 @@ module.exports = createCoreService("api::subtask.subtask", ({ strapi }) => ({
 
       return updatedSubtask;
     } catch (err) {
-      console.error("updateSubtask Service error message: ", err);
+      console.error("Original Error:", err);
 
-      throw err;
+      throw new Error("Failed to update subtask");
     }
   },
   async deleteSubtask(documentId) {
@@ -106,9 +121,9 @@ module.exports = createCoreService("api::subtask.subtask", ({ strapi }) => ({
 
       return deletedSubtask;
     } catch (err) {
-      console.error("deleteSubtask Service error message: ", err);
+      console.error("Original Error:", err);
 
-      throw err;
+      throw new Error("Failed to delete subtask");
     }
   },
   async deleteAllSubtasks() {
@@ -117,19 +132,33 @@ module.exports = createCoreService("api::subtask.subtask", ({ strapi }) => ({
     );
 
     try {
-      const deletedSubtasks = await strapi
+      const documents = await strapi
         .documents("api::subtask.subtask")
-        .deleteMany();
+        .findMany({
+          fields: ["documentId"],
+        });
 
-      if (!deletedSubtasks) {
-        throw new Error("Failed to delete all subtasks");
+      if (documents.length === 0) {
+        return [];
+      }
+
+      const deletedSubtasks = [];
+
+      for (const document of documents) {
+        const deletedSubtask = await strapi
+          .documents("api::subtask.subtask")
+          .delete({
+            documentId: document.documentId,
+          });
+
+        deletedSubtasks.push(deletedSubtask);
       }
 
       return deletedSubtasks;
     } catch (err) {
-      console.error("deleteAllSubtasks Service error message: ", err);
+      console.error("Original Error:", err);
 
-      throw err;
+      throw new Error("Failed to delete all subtasks");
     }
   },
 }));

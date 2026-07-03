@@ -9,18 +9,24 @@ const { createCoreService } = require("@strapi/strapi").factories;
 module.exports = createCoreService("api::reminder.reminder", ({ strapi }) => ({
   async createReminders(formBody) {
     console.log("createReminders Service is running");
+    console.log("createReminders formBody:", formBody);
 
-    const createdReminders = await strapi
-      .documents("api::reminder.reminder")
-      .create({
-        data: formBody,
-        locale: "en",
-        fields: ["remindAt", "sent", "message"],
-        status: "published",
-        populate: ["task"],
-      });
+    try {
+      const createdReminders = await strapi
+        .documents("api::reminder.reminder")
+        .create({
+          data: formBody,
+          locale: "en",
+          fields: ["remindAt", "sent", "message"],
+          status: "published",
+          populate: ["task"],
+        });
 
-    return createdReminders;
+      return createdReminders;
+    } catch (err) {
+      console.error("Original Error:", err);
+      throw new Error("Failed to create reminder");
+    }
   },
   async fetchReminders() {
     console.log("fetchReminders Service is running");
@@ -52,8 +58,8 @@ module.exports = createCoreService("api::reminder.reminder", ({ strapi }) => ({
 
       return reminders;
     } catch (err) {
-      console.error(err);
-      throw err;
+      console.error("Original Error:", err);
+      throw new Error("Failed to fetch reminders");
     }
   },
   async fetchReminder(documentId) {
@@ -77,9 +83,8 @@ module.exports = createCoreService("api::reminder.reminder", ({ strapi }) => ({
 
       return reminder;
     } catch (err) {
-      console.error(err);
-
-      throw err;
+      console.error("Original Error:", err);
+      throw new Error("Failed to fetch reminder");
     }
   },
   async updateReminder(documentId, data) {
@@ -106,9 +111,8 @@ module.exports = createCoreService("api::reminder.reminder", ({ strapi }) => ({
 
       return updatedReminder;
     } catch (err) {
-      console.error("updateReminder Service error message: ", err);
-
-      throw err;
+      console.error("Original Error:", err);
+      throw new Error("Failed to update reminder");
     }
   },
   async deleteReminder(documentId) {
@@ -131,9 +135,8 @@ module.exports = createCoreService("api::reminder.reminder", ({ strapi }) => ({
 
       return deletedReminder;
     } catch (err) {
-      console.error("deleteReminder Service error message: ", err);
-
-      throw err;
+      console.error("Original Error:", err);
+      throw new Error("Failed to delete reminder");
     }
   },
   async deleteAllReminders() {
@@ -142,19 +145,33 @@ module.exports = createCoreService("api::reminder.reminder", ({ strapi }) => ({
     );
 
     try {
-      const deletedReminders = await strapi
+      const documents = await strapi
         .documents("api::reminder.reminder")
-        .deleteMany();
+        .findMany({
+          fields: ["documentId"],
+        });
 
-      if (!deletedReminders) {
-        throw new Error("Failed to delete all reminders");
+      if (documents.length === 0) {
+        return [];
+      }
+
+      const deletedReminders = [];
+
+      for (const document of documents) {
+        const deletedReminder = await strapi
+          .documents("api::reminder.reminder")
+          .delete({
+            documentId: document.documentId,
+          });
+
+        deletedReminders.push(deletedReminder);
       }
 
       return deletedReminders;
     } catch (err) {
-      console.error("deleteAllReminders Service error message: ", err);
+      console.error("Original Error:", err);
 
-      throw err;
+      throw new Error("Failed to delete all reminders");
     }
   },
 }));

@@ -11,42 +11,61 @@ module.exports = createCoreController(
   ({ strapi }) => ({
     //Creatin a new Project
     async createReminders(ctx) {
-      console.log("====== CONTROLLER HIT ======");
+      console.log("====== CONTROLLER HIT createReminders ======");
       console.log(ctx);
 
-      const { body: reminderbody } = ctx.request;
+      try {
+        const { body: reminderbody } = ctx.request;
 
-      console.log("reminderbody: ", reminderbody);
+        console.log("reminderbody: ", reminderbody);
 
-      const newReminders = await strapi
-        .service("api::reminder.reminder")
-        .createNewProject(reminderbody);
+        const newReminders = await strapi
+          .service("api::reminder.reminder")
+          .createNewProject(reminderbody);
 
-      ctx.body = newReminders;
+        ctx.body = newReminders;
+      } catch (err) {
+        console.log("createReminders Error Message", err);
+        throw err;
+      }
     },
     async fetchReminders(ctx) {
-      console.log("====== CONTROLLER HIT ======");
+      console.log("====== CONTROLLER HIT fetchReminders ======");
       console.log(ctx);
 
-      const reminders = await strapi
-        .service("api::reminder.reminder")
-        .fetchProjects();
+      try {
+        const reminders = await strapi
+          .service("api::reminder.reminder")
+          .fetchProjects();
 
-      ctx.body = reminders;
+        ctx.body = reminders;
+      } catch (err) {
+        console.log("fetchReminders Error Message", err);
+        throw err;
+      }
     },
     async fetchReminder(ctx) {
-      console.log("====== CONTROLLER HIT ======");
+      console.log("====== CONTROLLER HIT fetchReminder ======");
       console.log(ctx);
 
-      const { documentId } = ctx.params;
+      try {
+        const { documentId } = ctx.params;
 
-      console.log("Reminder ID: ", documentId);
+        console.log("Reminder ID: ", documentId);
 
-      const result = await strapi
-        .service("api::reminder.reminder")
-        .fetchReminder(documentId);
+        const result = await strapi
+          .service("api::reminder.reminder")
+          .fetchReminder(documentId);
 
-      ctx.body = result;
+        if (!result) {
+          return ctx.notFound("Reminder not found");
+        }
+
+        ctx.body = result;
+      } catch (err) {
+        console.log("fetchReminder Error Message", err);
+        throw err;
+      }
     },
     async updateReminder(ctx) {
       console.log(
@@ -67,7 +86,7 @@ module.exports = createCoreController(
 
         ctx.body = result;
       } catch (err) {
-        console.error("updateReminder Error Message: ", err);
+        console.log("updateReminder Error Message", err);
 
         throw err;
       }
@@ -90,7 +109,7 @@ module.exports = createCoreController(
 
         ctx.body = result;
       } catch (err) {
-        console.error("deleteReminder Error Message: ", err);
+        console.log("deleteReminder Error Message", err);
 
         throw err;
       }
@@ -111,7 +130,7 @@ module.exports = createCoreController(
 
         ctx.body = deletedAllReminders;
       } catch (err) {
-        console.error("deleteAllReminders Error Message: ", err);
+        console.log("deleteAllReminders Error Message", err);
 
         throw err;
       }

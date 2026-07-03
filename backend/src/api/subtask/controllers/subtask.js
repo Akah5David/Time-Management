@@ -8,40 +8,58 @@ const { createCoreController } = require("@strapi/strapi").factories;
 
 module.exports = createCoreController("api::subtask.subtask", ({ strapi }) => ({
   async createSubtask(ctx) {
-    console.log("CreatTask Running");
-
+    console.log("====== CONTROLLER HIT createSubtask ======");
     console.log(ctx);
 
-    const { body: taskBody } = ctx.request;
+    try {
+      const { body: taskBody } = ctx.request;
 
-    const result = await strapi
-      .service("api::subtask.subtask")
-      .createSubtask(taskBody);
+      const result = await strapi
+        .service("api::subtask.subtask")
+        .createSubtask(taskBody);
 
-    ctx.body = result;
+      ctx.body = result;
+    } catch (err) {
+      console.log("createSubtask Error Message", err);
+      throw err;
+    }
   },
 
   async fetchSubTasks(ctx) {
-    console.log("CreatTask Running");
-
+    console.log("====== CONTROLLER HIT fetchSubTasks ======");
     console.log(ctx);
 
-    const result = await strapi.service("api::subtask.subtask").fetchSubTasks();
+    try {
+      const result = await strapi
+        .service("api::subtask.subtask")
+        .fetchSubTasks();
 
-    ctx.body = result;
+      ctx.body = result;
+    } catch (err) {
+      console.log("fetchSubTasks Error Message", err);
+      throw err;
+    }
   },
   async fetchSubTask(ctx) {
-    console.log("fetchSubTask Running");
-
+    console.log("====== CONTROLLER HIT fetchSubTask ======");
     console.log(ctx);
 
-    const { documentId } = ctx.params;
+    try {
+      const { documentId } = ctx.params;
 
-    const result = await strapi
-      .service("api::subtask.subtask")
-      .fetchSubTask(documentId);
+      const result = await strapi
+        .service("api::subtask.subtask")
+        .fetchSubTask(documentId);
 
-    ctx.body = result;
+      if (!result) {
+        return ctx.notFound("Subtask not found");
+      }
+
+      ctx.body = result;
+    } catch (err) {
+      console.log("fetchSubTask Error Message", err);
+      throw err;
+    }
   },
   async updateSubtask(ctx) {
     console.log("===============Started running updateSubtask==============");
@@ -60,7 +78,7 @@ module.exports = createCoreController("api::subtask.subtask", ({ strapi }) => ({
 
       ctx.body = result;
     } catch (err) {
-      console.error("updateSubtask Error Message: ", err);
+      console.log("updateSubtask Error Message", err);
 
       throw err;
     }
@@ -81,7 +99,7 @@ module.exports = createCoreController("api::subtask.subtask", ({ strapi }) => ({
 
       ctx.body = result;
     } catch (err) {
-      console.error("deleteSubtask Error Message: ", err);
+      console.log("deleteSubtask Error Message", err);
 
       throw err;
     }
@@ -102,7 +120,7 @@ module.exports = createCoreController("api::subtask.subtask", ({ strapi }) => ({
 
       ctx.body = deletedAllSubtasks;
     } catch (err) {
-      console.error("deleteAllSubtasks Error Message: ", err);
+      console.log("deleteAllSubtasks Error Message", err);
 
       throw err;
     }

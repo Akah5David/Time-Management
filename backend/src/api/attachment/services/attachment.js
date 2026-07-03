@@ -55,9 +55,9 @@ module.exports = createCoreService(
 
         return createdAttachment;
       } catch (err) {
-        console.error("createAttachment Service error message: ", err);
+        console.error("Original Error:", err);
 
-        throw err;
+        throw new Error("Failed to create attachment");
       }
     },
     async fetchAttachments() {
@@ -79,9 +79,9 @@ module.exports = createCoreService(
 
         return fetchedAttachments;
       } catch (err) {
-        console.error("fetchAttachments Service error message: ", err);
+        console.error("Original Error:", err);
 
-        throw err;
+        throw new Error("Failed to fetch attachments");
       }
     },
 
@@ -104,9 +104,9 @@ module.exports = createCoreService(
 
         return fetchedAttachment;
       } catch (err) {
-        console.error("fetchAttachment Service error message: ", err);
+        console.error("Original Error:", err);
 
-        throw err;
+        throw new Error("Failed to fetch attachment");
       }
     },
     async updateAttachment(documentId, body, files) {
@@ -155,9 +155,9 @@ module.exports = createCoreService(
 
         return updatedAttachment;
       } catch (err) {
-        console.error("updateAttachment Service error message: ", err);
+        console.error("Original Error:", err);
 
-        throw err;
+        throw new Error("Failed to update attachment");
       }
     },
     async deleteAttachment(documentId) {
@@ -220,14 +220,14 @@ module.exports = createCoreService(
           });
 
         if (!deletedAttachment) {
-          throw new Error("Fail to delete Attachment");
+          return {};
         }
 
         return deletedAttachment;
       } catch (err) {
-        console.error("deleteAttachment Service error message: ", err);
+        console.error("Original Error:", err);
 
-        throw err;
+        throw new Error("Failed to delete attachment");
       }
     },
     async deleteAllAttachments() {
@@ -236,7 +236,6 @@ module.exports = createCoreService(
       );
 
       try {
-        // fetch all attachment documents
         const fetchedAttachments = await strapi
           .documents("api::attachment.attachment")
           .findMany({
@@ -244,38 +243,58 @@ module.exports = createCoreService(
           });
 
         if (fetchedAttachments.length === 0) {
-          throw new Error("Failed to fetch all Attachments");
+          return [];
         }
 
-        // Creates a Map keyed by media id to eliminate duplicate media files
         const mediaMap = new Map();
 
-        //puts all attachmentFiles into setOfAttachmentFiles ensuring no duplicate of attachmentFiles
         for (const attachment of fetchedAttachments) {
-          for (const file of attachment.attachmentFiles) {
+          for (const attachment of fetchedAttachments) {
+            console.log(
+              "Type:",
+              typeof attachment.attachmentFiles,
+              "Value:",
+              attachment.attachmentFiles,
+            );
+          }
+          const files = attachment.attachmentFiles ?? [];
+
+          for (const file of files) {
             mediaMap.set(file.id, file);
           }
         }
 
-        //removing all attachmentFiles
         for (const file of mediaMap.values()) {
           await strapi.plugin("upload").service("upload").remove(file);
         }
 
-        //delete fetchedAttachmentFiles
-        const deletedAllAttachments = await strapi
+        const documents = await strapi
           .documents("api::attachment.attachment")
-          .deleteMany();
+          .findMany({
+            fields: ["documentId"],
+          });
 
-        if (!deletedAllAttachments) {
-          throw new Error("Fail to delete Attachments");
+        if (documents.length === 0) {
+          return [];
         }
 
-        return deletedAllAttachments;
-      } catch (err) {
-        console.error("deleteAllAttachments Service error message: ", err);
+        const deletedAttachments = [];
 
-        throw err;
+        for (const document of documents) {
+          const deletedAttachment = await strapi
+            .documents("api::attachment.attachment")
+            .delete({
+              documentId: document.documentId,
+            });
+
+          deletedAttachments.push(deletedAttachment);
+        }
+
+        return deletedAttachments;
+      } catch (err) {
+        console.error("Original Error:", err);
+
+        throw new Error("Failed to delete all attachments");
       }
     },
   }),

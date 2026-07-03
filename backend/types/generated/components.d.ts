@@ -1,5 +1,23 @@
 import type { Schema, Struct } from '@strapi/strapi';
 
+export interface SocialLinksSocialLinks extends Struct.ComponentSchema {
+  collectionName: 'components_social_links_social_links';
+  info: {
+    displayName: 'socialLinks';
+  };
+  attributes: {
+    icon: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    url: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+  };
+}
+
 export interface SpiritualMessages extends Struct.ComponentSchema {
   collectionName: 'components_spiritual_messages';
   info: {
@@ -41,6 +59,7 @@ export interface TaskGospel extends Struct.ComponentSchema {
 declare module '@strapi/strapi' {
   export module Public {
     export interface ComponentSchemas {
+      'social-links.social-links': SocialLinksSocialLinks;
       'spiritual.messages': SpiritualMessages;
       'task.details': TaskDetails;
       'task.gospel': TaskGospel;

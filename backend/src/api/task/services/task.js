@@ -9,6 +9,7 @@ const { createCoreService } = require("@strapi/strapi").factories;
 module.exports = createCoreService("api::task.task", ({ strapi }) => ({
   async createTask(formBody) {
     console.log("createTask Service is running");
+    console.log("createTask formBody:", formBody);
 
     try {
       const createdTask = await strapi.documents("api::task.task").create({
@@ -25,13 +26,12 @@ module.exports = createCoreService("api::task.task", ({ strapi }) => ({
 
       return createdTask;
     } catch (err) {
-      console.error("createTask Service Error Message: ", err);
-
-      throw err;
+      console.error("Original Error:", err);
+      throw new Error("Failed to create task");
     }
   },
   async fetchTasks() {
-    console.log("createTask Service is running");
+    console.log("fetchTasks Service is running");
 
     try {
       const tasks = await strapi.documents("api::task.task").findMany({
@@ -56,13 +56,13 @@ module.exports = createCoreService("api::task.task", ({ strapi }) => ({
       }
       return tasks;
     } catch (err) {
-      console.error("fetchTasks Service Error Message: ", err);
-
-      throw err;
+      console.error("Original Error:", err);
+      throw new Error("Failed to fetch tasks");
     }
   },
   async fetchTask(documentId) {
     console.log("fetchTask Service is running");
+    console.log("fetchTask documentId:", documentId);
 
     try {
       const task = await strapi.documents("api::task.task").findOne({
@@ -79,9 +79,8 @@ module.exports = createCoreService("api::task.task", ({ strapi }) => ({
 
       return task;
     } catch (err) {
-      console.error("fetchTask Service Error Message: ", err);
-
-      throw err;
+      console.error("Original Error:", err);
+      throw new Error("Failed to fetch task");
     }
   },
   async updateTask(documentId, data) {
@@ -106,9 +105,8 @@ module.exports = createCoreService("api::task.task", ({ strapi }) => ({
 
       return updatedTask;
     } catch (err) {
-      console.error("updateTask Service error message: ", err);
-
-      throw err;
+      console.error("Original Error:", err);
+      throw new Error("Failed to update task");
     }
   },
   async deleteTask(documentId) {
@@ -129,9 +127,8 @@ module.exports = createCoreService("api::task.task", ({ strapi }) => ({
 
       return deletedTask;
     } catch (err) {
-      console.error("deleteTask Service error message: ", err);
-
-      throw err;
+      console.error("Original Error:", err);
+      throw new Error("Failed to delete task");
     }
   },
   async deleteAllTasks() {
@@ -140,19 +137,28 @@ module.exports = createCoreService("api::task.task", ({ strapi }) => ({
     );
 
     try {
-      const deletedTasks = await strapi
-        .documents("api::task.task")
-        .deleteMany();
+      const documents = await strapi.documents("api::task.task").findMany({
+        fields: ["documentId"],
+      });
 
-      if (!deletedTasks) {
-        throw new Error("Failed to delete all tasks");
+      if (documents.length === 0) {
+        return [];
+      }
+
+      const deletedTasks = [];
+
+      for (const document of documents) {
+        const deletedTask = await strapi.documents("api::task.task").delete({
+          documentId: document.documentId,
+        });
+
+        deletedTasks.push(deletedTask);
       }
 
       return deletedTasks;
     } catch (err) {
-      console.error("deleteAllTasks Service error message: ", err);
-
-      throw err;
+      console.error("Original Error:", err);
+      throw new Error("Failed to delete all tasks");
     }
   },
 }));
