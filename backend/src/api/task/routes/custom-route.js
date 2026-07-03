@@ -22,8 +22,38 @@ module.exports = {
     },
     {
       method: "GET",
-      path: "/tasks/:id",
+      path: "/tasks/:documentId",
       handler: "task.fetchTask",
+      config: {
+        auth: false,
+        policies: [],
+        middlewares: [],
+      },
+    },
+    {
+      method: "PUT",
+      path: "/tasks/:documentId",
+      handler: "task.updateTask",
+      config: {
+        auth: false,
+        policies: [],
+        middlewares: [],
+      },
+    },
+    {
+      method: "DELETE",
+      path: "/tasks/:documentId",
+      handler: "task.deleteTask",
+      config: {
+        auth: false,
+        policies: [],
+        middlewares: [],
+      },
+    },
+    {
+      method: "DELETE",
+      path: "/tasks",
+      handler: "task.deleteAllTasks",
       config: {
         auth: false,
         policies: [],

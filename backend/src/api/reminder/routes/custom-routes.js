@@ -22,8 +22,38 @@ module.exports = {
     },
     {
       method: "GET",
-      path: "/reminders/:id",
+      path: "/reminders/:documentId",
       handler: "reminder.fetchReminder",
+      config: {
+        auth: false,
+        policies: [],
+        middlewares: [],
+      },
+    },
+    {
+      method: "PUT",
+      path: "/reminders/:documentId",
+      handler: "reminder.updateReminder",
+      config: {
+        auth: false,
+        policies: [],
+        middlewares: [],
+      },
+    },
+    {
+      method: "DELETE",
+      path: "/reminders/:documentId",
+      handler: "reminder.deleteReminder",
+      config: {
+        auth: false,
+        policies: [],
+        middlewares: [],
+      },
+    },
+    {
+      method: "DELETE",
+      path: "/reminders",
+      handler: "reminder.deleteAllReminders",
       config: {
         auth: false,
         policies: [],

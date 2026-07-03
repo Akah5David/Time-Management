@@ -22,8 +22,38 @@ module.exports = {
     },
     {
       method: "GET",
-      path: "/subtasks/:id",
+      path: "/subtasks/:documentId",
       handler: "subtask.fetchSubTask",
+      config: {
+        auth: false,
+        policies: [],
+        middlewares: [],
+      },
+    },
+    {
+      method: "PUT",
+      path: "/subtasks/:documentId",
+      handler: "subtask.updateSubtask",
+      config: {
+        auth: false,
+        policies: [],
+        middlewares: [],
+      },
+    },
+    {
+      method: "DELETE",
+      path: "/subtasks/:documentId",
+      handler: "subtask.deleteSubtask",
+      config: {
+        auth: false,
+        policies: [],
+        middlewares: [],
+      },
+    },
+    {
+      method: "DELETE",
+      path: "/subtasks",
+      handler: "subtask.deleteAllSubtasks",
       config: {
         auth: false,
         policies: [],

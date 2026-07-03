@@ -18,8 +18,32 @@ module.exports = {
     },
     {
       method: "GET",
-      path: "/projects/:id",
+      path: "/projects/:documentId",
       handler: "project.fetchProject",
+      config: {
+        auth: false,
+      },
+    },
+    {
+      method: "PUT",
+      path: "/projects/:documentId",
+      handler: "project.updateProject",
+      config: {
+        auth: false,
+      },
+    },
+    {
+      method: "DELETE",
+      path: "/projects/:documentId",
+      handler: "project.deleteProject",
+      config: {
+        auth: false,
+      },
+    },
+    {
+      method: "DELETE",
+      path: "/projects",
+      handler: "project.deleteAllProjects",
       config: {
         auth: false,
       },

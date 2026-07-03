@@ -14,7 +14,7 @@ module.exports = createCoreController(
       console.log("====== CONTROLLER HIT ======");
       console.log(ctx);
 
-      let reminderbody = ctx.request.body;
+      const { body: reminderbody } = ctx.request;
 
       console.log("reminderbody: ", reminderbody);
 
@@ -38,15 +38,83 @@ module.exports = createCoreController(
       console.log("====== CONTROLLER HIT ======");
       console.log(ctx);
 
-      let { id } = ctx.request.params;
+      const { documentId } = ctx.params;
 
-      console.log("Reminder ID: ", id);
+      console.log("Reminder ID: ", documentId);
 
-      const reminder = await strapi
+      const result = await strapi
         .service("api::reminder.reminder")
-        .fetchProject(id);
+        .fetchReminder(documentId);
 
-      ctx.body = reminder;
+      ctx.body = result;
+    },
+    async updateReminder(ctx) {
+      console.log(
+        "===============Started running updateReminder==============",
+      );
+
+      try {
+        const { documentId } = ctx.params;
+        const { body } = ctx.request;
+
+        const result = await strapi
+          .service("api::reminder.reminder")
+          .updateReminder(documentId, body);
+
+        if (!result) {
+          throw new Error("Failed to update reminder");
+        }
+
+        ctx.body = result;
+      } catch (err) {
+        console.error("updateReminder Error Message: ", err);
+
+        throw err;
+      }
+    },
+    async deleteReminder(ctx) {
+      console.log(
+        "===============Started running deleteReminder==============",
+      );
+
+      try {
+        const { documentId } = ctx.params;
+
+        const result = await strapi
+          .service("api::reminder.reminder")
+          .deleteReminder(documentId);
+
+        if (!result) {
+          throw new Error("Failed to delete reminder");
+        }
+
+        ctx.body = result;
+      } catch (err) {
+        console.error("deleteReminder Error Message: ", err);
+
+        throw err;
+      }
+    },
+    async deleteAllReminders(ctx) {
+      console.log(
+        "===============Started running deleteAllReminders==============",
+      );
+
+      try {
+        let deletedAllReminders = await strapi
+          .service("api::reminder.reminder")
+          .deleteAllReminders();
+
+        if (!deletedAllReminders) {
+          throw new Error("Failed to delete all reminders");
+        }
+
+        ctx.body = deletedAllReminders;
+      } catch (err) {
+        console.error("deleteAllReminders Error Message: ", err);
+
+        throw err;
+      }
     },
   }),
 );

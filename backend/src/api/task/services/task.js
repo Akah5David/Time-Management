@@ -61,12 +61,12 @@ module.exports = createCoreService("api::task.task", ({ strapi }) => ({
       throw err;
     }
   },
-  async fetchTask(taskId) {
-    console.log("createTask Service is running");
+  async fetchTask(documentId) {
+    console.log("fetchTask Service is running");
 
     try {
       const task = await strapi.documents("api::task.task").findOne({
-        documentId: taskId,
+        documentId: documentId,
         locale: "en",
         fields: ["title", "description", "dueDate", "priority"],
         status: "published",
@@ -80,6 +80,77 @@ module.exports = createCoreService("api::task.task", ({ strapi }) => ({
       return task;
     } catch (err) {
       console.error("fetchTask Service Error Message: ", err);
+
+      throw err;
+    }
+  },
+  async updateTask(documentId, data) {
+    console.log(
+      "===============Started running service updateTask==============",
+    );
+
+    console.log("updateTask taskId: ", documentId);
+
+    try {
+      const updatedTask = await strapi.documents("api::task.task").update({
+        documentId: documentId,
+        data: data,
+        fields: ["title", "description", "dueDate", "priority"],
+        status: "published",
+        populate: ["labels", "project", "subtasks", "reminders", "lists"],
+      });
+
+      if (!updatedTask) {
+        throw new Error("Failed to update task");
+      }
+
+      return updatedTask;
+    } catch (err) {
+      console.error("updateTask Service error message: ", err);
+
+      throw err;
+    }
+  },
+  async deleteTask(documentId) {
+    console.log(
+      "===============Started running service deleteTask==============",
+    );
+
+    console.log("deleteTask taskId: ", documentId);
+
+    try {
+      const deletedTask = await strapi.documents("api::task.task").delete({
+        documentId: documentId,
+      });
+
+      if (!deletedTask) {
+        throw new Error("Failed to delete task");
+      }
+
+      return deletedTask;
+    } catch (err) {
+      console.error("deleteTask Service error message: ", err);
+
+      throw err;
+    }
+  },
+  async deleteAllTasks() {
+    console.log(
+      "===============Started running service deleteAllTasks==============",
+    );
+
+    try {
+      const deletedTasks = await strapi
+        .documents("api::task.task")
+        .deleteMany();
+
+      if (!deletedTasks) {
+        throw new Error("Failed to delete all tasks");
+      }
+
+      return deletedTasks;
+    } catch (err) {
+      console.error("deleteAllTasks Service error message: ", err);
 
       throw err;
     }

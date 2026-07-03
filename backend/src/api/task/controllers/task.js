@@ -12,7 +12,7 @@ module.exports = createCoreController("api::task.task", ({ strapi }) => ({
 
     console.log(ctx);
 
-    const taskBody = ctx.request.body;
+    const { body: taskBody } = ctx.request;
 
     const result = await strapi.service("api::task.task").createTask(taskBody);
 
@@ -42,17 +42,81 @@ module.exports = createCoreController("api::task.task", ({ strapi }) => ({
 
     console.log(ctx);
 
-    let taskId = ctx.params.id;
+    const { documentId } = ctx.params;
     try {
-      const task = await strapi.service("api::task.task").fetchTask(taskId);
+      const result = await strapi
+        .service("api::task.task")
+        .fetchTask(documentId);
 
-      if (!task) {
+      if (!result) {
         throw new Error("No Task exist");
       }
 
-      ctx.body = task;
+      ctx.body = result;
     } catch (err) {
       console.error("fetchTask Controller Error Message: ", err);
+
+      throw err;
+    }
+  },
+  async updateTask(ctx) {
+    console.log("===============Started running updateTask==============");
+
+    try {
+      const { documentId } = ctx.params;
+      const { body } = ctx.request;
+
+      const result = await strapi
+        .service("api::task.task")
+        .updateTask(documentId, body);
+
+      if (!result) {
+        throw new Error("Failed to update task");
+      }
+
+      ctx.body = result;
+    } catch (err) {
+      console.error("updateTask Error Message: ", err);
+
+      throw err;
+    }
+  },
+  async deleteTask(ctx) {
+    console.log("===============Started running deleteTask==============");
+
+    try {
+      const { documentId } = ctx.params;
+
+      const result = await strapi
+        .service("api::task.task")
+        .deleteTask(documentId);
+
+      if (!result) {
+        throw new Error("Failed to delete task");
+      }
+
+      ctx.body = result;
+    } catch (err) {
+      console.error("deleteTask Error Message: ", err);
+
+      throw err;
+    }
+  },
+  async deleteAllTasks(ctx) {
+    console.log("===============Started running deleteAllTasks==============");
+
+    try {
+      let deletedAllTasks = await strapi
+        .service("api::task.task")
+        .deleteAllTasks();
+
+      if (!deletedAllTasks) {
+        throw new Error("Failed to delete all tasks");
+      }
+
+      ctx.body = deletedAllTasks;
+    } catch (err) {
+      console.error("deleteAllTasks Error Message: ", err);
 
       throw err;
     }

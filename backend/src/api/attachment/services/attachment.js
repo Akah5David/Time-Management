@@ -89,10 +89,12 @@ module.exports = createCoreService(
       }
     },
 
-    async fetchAttachment(attachmentId) {
-      print(
+    async fetchAttachment(ctx) {
+      console.log(
         "===============Started running service fetchAttachment==============",
       );
+
+      const attachmentId = ctx.params.id;
 
       console.log("attachmentId: ", attachmentId);
 
@@ -119,7 +121,7 @@ module.exports = createCoreService(
       );
 
       const { body, files } = ctx.request;
-      const attachmentId = ctx.params;
+      const attachmentId = ctx.params.id;
 
       console.log("createAttachment service ctx: ", body, files);
 
@@ -182,9 +184,7 @@ module.exports = createCoreService(
           .documents("api::attachment.attachment")
           .findOne({
             documentId: attachmentId,
-            locale: "en",
-            status: "published",
-            populate: ["task", "attachmentFiles"],
+            populate: ["attachmentFiles"],
           });
 
         if (!fetchedAttachment) {
@@ -195,28 +195,42 @@ module.exports = createCoreService(
         const fetchedAttachments = await strapi
           .documents("api::attachment.attachment")
           .findMany({
-            populate: ["task", "attachmentFiles"],
+            populate: ["attachmentFiles"],
           });
 
         if (!fetchedAttachments) {
-          throw new Error("Fail to fetch Attachments");
+          throw new Error("Fail to fetch all Attachments");
         }
 
-        const isAttachmentFileMatch = fetchedAttachments.find((attachment) => {
-          const isMatch = attachment.attachmentFiles.map((attachmentFile) => {
-            if (attachmentFile.id === fetchedAttachment.attachmentFiles[0].id) {
-              return true;
-            } else {
-              return false;
-            }
-          });
-          return isMatch;
-        });
+        // checks if every media in fetchedAttachment.attachmentFiles array is used
+        // by other attachment attachmentFiles before deleting that media
+        for (const media of fetchedAttachment.attachmentFiles) {
+          // Assume this media is not referenced anywhere else
+          let isReferenced = false;
 
-        if (isAttachmentFileMatch === false) {
-          //remove media from media library
-          for (const file of fetchedAttachment.attachmentFiles) {
-            await strapi.plugin("upload").service("upload").remove(file);
+          // Check every attachment in fetchedAttachments
+          for (const attachment of fetchedAttachments) {
+            // Skip the attachment we're deleting
+            if (attachment.documentId === attachmentId) {
+              continue;
+            }
+
+            // Check every media inside this attachment
+            for (const mediafile of attachment.attachmentFiles) {
+              if (mediafile.id === media.id) {
+                isReferenced = true;
+                break;
+              }
+            }
+
+            if (isReferenced) {
+              break;
+            }
+          }
+
+          if (!isReferenced) {
+            //remove media from media library
+            await strapi.plugin("upload").service("upload").remove(media);
           }
         }
 
@@ -240,5 +254,108 @@ module.exports = createCoreService(
         throw err;
       }
     },
+    async deleteAllAttachments() {
+      console.log(
+        "===============Started running service deleteAllAttachments==============",
+      );
+
+      try {
+        // fetch all attachment documents
+        const fetchedAttachments = await strapi
+          .documents("api::attachment.attachment")
+          .findMany({
+            populate: ["attachmentFiles"],
+          });
+
+        if (fetchedAttachments.length === 0) {
+          throw new Error("Failed to fetch all Attachments");
+        }
+
+        // Creates a Map keyed by media id to eliminate duplicate media files
+        const mediaMap = new Map();
+
+        //puts all attachmentFiles into setOfAttachmentFiles ensuring no duplicate of attachmentFiles
+        for (const attachment of fetchedAttachments) {
+          for (const file of attachment.attachmentFiles) {
+            mediaMap.set(file.id, file);
+          }
+        }
+
+        //removing all attachmentFiles
+        for (const file of mediaMap.values()) {
+          await strapi.plugin("upload").service("upload").remove(file);
+        }
+
+        //delete fetchedAttachmentFiles
+        const deletedAllAttachments = await strapi
+          .documents("api::attachment.attachment")
+          .deleteMany();
+
+        if (!deletedAllAttachments) {
+          throw new Error("Fail to delete Attachments");
+        }
+
+        return deletedAllAttachments;
+      } catch (err) {
+        console.error("deleteAllAttachments Service error message: ", err);
+
+        throw err;
+      }
+    },
   }),
 );
+
+//fetch attachment document with doucmentId equals attachmentId
+const fetchedAttachment = await strapi
+  .documents("api::attachment.attachment")
+  .findOne({
+    documentId: attachmentId,
+    populate: ["attachmentFiles"],
+  });
+
+if (!fetchedAttachment) {
+  throw new Error("Fail to fetch Attachment");
+}
+
+// fetch all attachment documents
+const fetchedAttachments = await strapi
+  .documents("api::attachment.attachment")
+  .findMany({
+    populate: ["attachmentFiles"],
+  });
+
+if (!fetchedAttachments) {
+  throw new Error("Fail to fetch all Attachments");
+}
+
+// checks if every media in fetchedAttachment.attachmentFiles array is used
+// by other attachment attachmentFiles before deleting that media
+for (const media of fetchedAttachment.attachmentFiles) {
+  // Assume this media is not referenced anywhere else
+  let isReferenced = false;
+
+  // Check every attachment in fetchedAttachments
+  for (const attachment of fetchedAttachments) {
+    // Skip the attachment we're deleting
+    if (attachment.documentId === attachmentId) {
+      continue;
+    }
+
+    // Check every media inside this attachment
+    for (const mediafile of attachment.attachmentFiles) {
+      if (mediafile.id === media.id) {
+        isReferenced = true;
+        break;
+      }
+    }
+
+    if (isReferenced) {
+      break;
+    }
+  }
+
+  if (!isReferenced) {
+    //remove media from media library
+    await strapi.plugin("upload").service("upload").remove(media);
+  }
+}
