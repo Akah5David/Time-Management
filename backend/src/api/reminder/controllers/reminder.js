@@ -12,7 +12,7 @@ module.exports = createCoreController(
     //Creatin a new Project
     async createReminders(ctx) {
       console.log("====== CONTROLLER HIT createReminders ======");
-      console.log(ctx);
+      console.log(ctx.request.body);
 
       try {
         const { body: reminderbody } = ctx.request;
@@ -21,7 +21,11 @@ module.exports = createCoreController(
 
         const newReminders = await strapi
           .service("api::reminder.reminder")
-          .createNewProject(reminderbody);
+          .createReminders(reminderbody);
+
+          if(newReminders.length === 0){
+            return ctx.notFound("Failed To create Reminder")
+          }
 
         ctx.body = newReminders;
       } catch (err) {
@@ -31,12 +35,11 @@ module.exports = createCoreController(
     },
     async fetchReminders(ctx) {
       console.log("====== CONTROLLER HIT fetchReminders ======");
-      console.log(ctx);
 
       try {
         const reminders = await strapi
           .service("api::reminder.reminder")
-          .fetchProjects();
+          .fetchReminders();
 
         ctx.body = reminders;
       } catch (err) {
@@ -46,7 +49,7 @@ module.exports = createCoreController(
     },
     async fetchReminder(ctx) {
       console.log("====== CONTROLLER HIT fetchReminder ======");
-      console.log(ctx);
+      console.log(ctx.request.body);
 
       try {
         const { documentId } = ctx.params;

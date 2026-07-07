@@ -15,6 +15,7 @@ module.exports = createCoreController(
       );
 
       const { body, files } = ctx.request;
+      console.log(body, files)
 
       try {
         let createdAttachment = await strapi
@@ -79,7 +80,7 @@ module.exports = createCoreController(
     },
     async updateAttachment(ctx) {
       console.log(
-        "===============Started running updateAttachment==============",
+        "===============Started running updateAttachment service==============",
       );
 
       const { documentId } = ctx.params;

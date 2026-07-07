@@ -12,7 +12,7 @@ module.exports = createCoreService("api::reminder.reminder", ({ strapi }) => ({
     console.log("createReminders formBody:", formBody);
 
     try {
-      const createdReminders = await strapi
+      const createdReminder = await strapi
         .documents("api::reminder.reminder")
         .create({
           data: formBody,
@@ -22,7 +22,11 @@ module.exports = createCoreService("api::reminder.reminder", ({ strapi }) => ({
           populate: ["task"],
         });
 
-      return createdReminders;
+      if (!createdReminder) {
+        return {};
+      }
+
+      return createdReminder;
     } catch (err) {
       console.error("Original Error:", err);
       throw new Error("Failed to create reminder");
@@ -40,7 +44,7 @@ module.exports = createCoreService("api::reminder.reminder", ({ strapi }) => ({
           fields: ["remindAt", "sent", "message"],
           status: "draft",
           populate: ["task"],
-          sort: "task:asc",
+          sort: "remindAt:asc",
           pagination: {
             limit: 10,
             start: 0,
@@ -53,7 +57,7 @@ module.exports = createCoreService("api::reminder.reminder", ({ strapi }) => ({
         });
 
       if (reminders.length === 0) {
-        throw new Error("No Reminder exist");
+        return [];
       }
 
       return reminders;
@@ -78,7 +82,7 @@ module.exports = createCoreService("api::reminder.reminder", ({ strapi }) => ({
         });
 
       if (!reminder) {
-        throw new Error("No Reminder exist");
+        C;
       }
 
       return reminder;
@@ -106,7 +110,7 @@ module.exports = createCoreService("api::reminder.reminder", ({ strapi }) => ({
         });
 
       if (!updatedReminder) {
-        throw new Error("Failed to update reminder");
+        return {};
       }
 
       return updatedReminder;
@@ -130,8 +134,9 @@ module.exports = createCoreService("api::reminder.reminder", ({ strapi }) => ({
         });
 
       if (!deletedReminder) {
-        throw new Error("Failed to delete reminder");
+        return {};
       }
+
 
       return deletedReminder;
     } catch (err) {

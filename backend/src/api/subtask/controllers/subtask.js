@@ -9,7 +9,10 @@ const { createCoreController } = require("@strapi/strapi").factories;
 module.exports = createCoreController("api::subtask.subtask", ({ strapi }) => ({
   async createSubtask(ctx) {
     console.log("====== CONTROLLER HIT createSubtask ======");
-    console.log(ctx);
+    console.log(ctx.request.body);
+
+    console.log(ctx.request.body);
+    console.log(typeof ctx.request.body);
 
     try {
       const { body: taskBody } = ctx.request;
@@ -27,7 +30,6 @@ module.exports = createCoreController("api::subtask.subtask", ({ strapi }) => ({
 
   async fetchSubTasks(ctx) {
     console.log("====== CONTROLLER HIT fetchSubTasks ======");
-    console.log(ctx);
 
     try {
       const result = await strapi
@@ -42,7 +44,7 @@ module.exports = createCoreController("api::subtask.subtask", ({ strapi }) => ({
   },
   async fetchSubTask(ctx) {
     console.log("====== CONTROLLER HIT fetchSubTask ======");
-    console.log(ctx);
+    console.log(ctx.params);
 
     try {
       const { documentId } = ctx.params;

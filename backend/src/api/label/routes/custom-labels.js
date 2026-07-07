@@ -1,8 +1,8 @@
-exports.default = {
+module.exports = {
   routes: [
     {
       method: "POST",
-      path: "/labels/create",
+      path: "/labels/actions/create",
       handler: "label.createLabel",
       config: {
         auth: false,
@@ -32,7 +32,7 @@ exports.default = {
     },
     {
       method: "PUT",
-      path: "/labels/:documentId",
+      path: "/labels/actions/update/:documentId",
       handler: "label.updateLabel",
       config: {
         auth: false,
@@ -42,7 +42,7 @@ exports.default = {
     },
     {
       method: "DELETE",
-      path: "/labels/:documentId",
+      path: "/labels/actions/delete/:documentId",
       handler: "label.deleteLabel",
       config: {
         auth: false,
@@ -52,7 +52,7 @@ exports.default = {
     },
     {
       method: "DELETE",
-      path: "/labels/delete",
+      path: "/labels/actions/delete-all",
       handler: "label.deleteAllLabels",
       config: {
         auth: false,

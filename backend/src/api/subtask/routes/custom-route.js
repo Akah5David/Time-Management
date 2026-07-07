@@ -32,7 +32,7 @@ module.exports = {
     },
     {
       method: "PUT",
-      path: "/subtasks/:documentId",
+      path: "/subtasks/update/:documentId",
       handler: "subtask.updateSubtask",
       config: {
         auth: false,
@@ -42,7 +42,7 @@ module.exports = {
     },
     {
       method: "DELETE",
-      path: "/subtasks/:documentId",
+      path: "/subtasks/delete/:documentId",
       handler: "subtask.deleteSubtask",
       config: {
         auth: false,
@@ -52,7 +52,7 @@ module.exports = {
     },
     {
       method: "DELETE",
-      path: "/subtasks",
+      path: "/subtasks/delete-all",
       handler: "subtask.deleteAllSubtasks",
       config: {
         auth: false,

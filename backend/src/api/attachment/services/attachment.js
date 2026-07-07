@@ -50,7 +50,7 @@ module.exports = createCoreService(
           });
 
         if (!createdAttachment) {
-          throw new Error("Fail to create Attachment");
+          return {};
         }
 
         return createdAttachment;
@@ -77,6 +77,10 @@ module.exports = createCoreService(
           throw new Error("Fail to fetch Attachments");
         }
 
+        if (!fetchedAttachments) {
+          return [];
+        }
+
         return fetchedAttachments;
       } catch (err) {
         console.error("Original Error:", err);
@@ -101,6 +105,10 @@ module.exports = createCoreService(
             status: "published",
             populate: ["task", "attachmentFiles"],
           });
+
+        if (!fetchedAttachment) {
+          return {};
+        }
 
         return fetchedAttachment;
       } catch (err) {
@@ -150,7 +158,7 @@ module.exports = createCoreService(
           });
 
         if (!updatedAttachment) {
-          throw new Error("Fail to update Attachment");
+          return {};
         }
 
         return updatedAttachment;
@@ -174,7 +182,7 @@ module.exports = createCoreService(
           });
 
         if (!fetchedAttachment) {
-          throw new Error("Fail to fetch Attachment");
+          return {};
         }
 
         const fetchedAttachments = await strapi
@@ -184,7 +192,7 @@ module.exports = createCoreService(
           });
 
         if (!fetchedAttachments) {
-          throw new Error("Fail to fetch all Attachments");
+          return [];
         }
 
         for (const media of fetchedAttachment.attachmentFiles) {
@@ -281,6 +289,7 @@ module.exports = createCoreService(
         const deletedAttachments = [];
 
         for (const document of documents) {
+          console.log("deleted documents: ", document);
           const deletedAttachment = await strapi
             .documents("api::attachment.attachment")
             .delete({
@@ -288,6 +297,10 @@ module.exports = createCoreService(
             });
 
           deletedAttachments.push(deletedAttachment);
+        }
+
+        if (!deletedAttachments) {
+          return [];
         }
 
         return deletedAttachments;

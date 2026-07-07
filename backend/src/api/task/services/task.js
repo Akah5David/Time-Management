@@ -20,14 +20,14 @@ module.exports = createCoreService("api::task.task", ({ strapi }) => ({
         populate: ["labels", "project", "subtasks", "reminders", "lists"],
       });
 
-      if (createdTask.length === 0) {
-        throw new Error("NO Task Was created by the Document service API");
+      if (!createdTask) {
+        return {};
       }
 
       return createdTask;
     } catch (err) {
       console.error("Original Error:", err);
-      throw new Error("Failed to create task");
+      throw err;
     }
   },
   async fetchTasks() {
@@ -44,15 +44,15 @@ module.exports = createCoreService("api::task.task", ({ strapi }) => ({
           limit: 10,
           start: 0,
         },
-        filters: {
-          title: {
-            $startsWith: "b",
-          },
-        },
+        // filters: {
+        //   title: {
+        //     $startsWith: "b",
+        //   },
+        // },
       });
 
       if (tasks.length === 0) {
-        throw new Error("NO Task Was created by the Document service API");
+        return [];
       }
       return tasks;
     } catch (err) {
@@ -68,13 +68,13 @@ module.exports = createCoreService("api::task.task", ({ strapi }) => ({
       const task = await strapi.documents("api::task.task").findOne({
         documentId: documentId,
         locale: "en",
-        fields: ["title", "description", "dueDate", "priority"],
+        fields: ["documentId", "title", "description", "dueDate", "priority"],
         status: "published",
         populate: ["labels", "project", "subtasks", "reminders"],
       });
 
       if (!task) {
-        throw new Error("NO Task Was created by the Document service API");
+        return {};
       }
 
       return task;
@@ -100,7 +100,7 @@ module.exports = createCoreService("api::task.task", ({ strapi }) => ({
       });
 
       if (!updatedTask) {
-        throw new Error("Failed to update task");
+        return {};
       }
 
       return updatedTask;
@@ -122,7 +122,7 @@ module.exports = createCoreService("api::task.task", ({ strapi }) => ({
       });
 
       if (!deletedTask) {
-        throw new Error("Failed to delete task");
+        return {};
       }
 
       return deletedTask;
@@ -153,6 +153,10 @@ module.exports = createCoreService("api::task.task", ({ strapi }) => ({
         });
 
         deletedTasks.push(deletedTask);
+      }
+
+      if (deletedTasks.length === 0) {
+        return [];
       }
 
       return deletedTasks;

@@ -32,7 +32,7 @@ module.exports = {
     },
     {
       method: "PUT",
-      path: "/reminders/:documentId",
+      path: "/reminders/update/:documentId",
       handler: "reminder.updateReminder",
       config: {
         auth: false,
@@ -42,7 +42,7 @@ module.exports = {
     },
     {
       method: "DELETE",
-      path: "/reminders/:documentId",
+      path: "/reminders/delete/:documentId",
       handler: "reminder.deleteReminder",
       config: {
         auth: false,
@@ -52,7 +52,7 @@ module.exports = {
     },
     {
       method: "DELETE",
-      path: "/reminders",
+      path: "/reminders/delete-all",
       handler: "reminder.deleteAllReminders",
       config: {
         auth: false,

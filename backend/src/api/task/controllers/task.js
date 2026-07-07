@@ -9,7 +9,7 @@ const { createCoreController } = require("@strapi/strapi").factories;
 module.exports = createCoreController("api::task.task", ({ strapi }) => ({
   async createTask(ctx) {
     console.log("====== CONTROLLER HIT createTask ======");
-    console.log(ctx);
+    console.log(ctx.request.body);
 
     try {
       const { body: taskBody } = ctx.request;
@@ -17,6 +17,10 @@ module.exports = createCoreController("api::task.task", ({ strapi }) => ({
       const result = await strapi
         .service("api::task.task")
         .createTask(taskBody);
+
+      if (!result) {
+        return ctx.notFound("Unable to create Task");
+      }
 
       ctx.body = result;
     } catch (err) {
@@ -27,13 +31,12 @@ module.exports = createCoreController("api::task.task", ({ strapi }) => ({
 
   async fetchTasks(ctx) {
     console.log("====== CONTROLLER HIT fetchTasks ======");
-    console.log(ctx);
 
     try {
       const tasks = await strapi.service("api::task.task").fetchTasks();
 
       if (tasks.length === 0) {
-        throw new Error("There are no Tasks Existing");
+        return ctx.notFound("No Task found");
       }
       ctx.body = tasks;
     } catch (err) {
@@ -44,10 +47,11 @@ module.exports = createCoreController("api::task.task", ({ strapi }) => ({
   },
   async fetchTask(ctx) {
     console.log("====== CONTROLLER HIT fetchTask ======");
-    console.log(ctx);
+    const { documentId } = ctx.params;
+
+    console.log("Task Id: ", documentId);
 
     try {
-      const { documentId } = ctx.params;
       const result = await strapi
         .service("api::task.task")
         .fetchTask(documentId);
@@ -74,7 +78,7 @@ module.exports = createCoreController("api::task.task", ({ strapi }) => ({
         .updateTask(documentId, body);
 
       if (!result) {
-        throw new Error("Failed to update task");
+        return ctx.notFound("Failed to update task");
       }
 
       ctx.body = result;
@@ -94,7 +98,7 @@ module.exports = createCoreController("api::task.task", ({ strapi }) => ({
         .deleteTask(documentId);
 
       if (!result) {
-        throw new Error("Failed to delete task");
+        return ctx.notFound("Failed to delete task");
       }
 
       ctx.body = result;
@@ -112,8 +116,8 @@ module.exports = createCoreController("api::task.task", ({ strapi }) => ({
         .service("api::task.task")
         .deleteAllTasks();
 
-      if (!deletedAllTasks) {
-        throw new Error("Failed to delete all tasks");
+      if (deletedAllTasks.length === 0) {
+        return ctx.notFound("Failed to all tasks");
       }
 
       ctx.body = deletedAllTasks;

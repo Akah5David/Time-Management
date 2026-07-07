@@ -25,9 +25,7 @@ export interface SpiritualMessages extends Struct.ComponentSchema {
     icon: 'emotionUnhappy';
   };
   attributes: {
-    preacher: Schema.Attribute.String &
-      Schema.Attribute.Required &
-      Schema.Attribute.Unique;
+    preacher: Schema.Attribute.String & Schema.Attribute.Required;
     title: Schema.Attribute.String & Schema.Attribute.Required;
   };
 }
@@ -50,7 +48,7 @@ export interface TaskGospel extends Struct.ComponentSchema {
     icon: 'clock';
   };
   attributes: {
-    titile: Schema.Attribute.String &
+    title: Schema.Attribute.String &
       Schema.Attribute.Required &
       Schema.Attribute.Unique;
   };

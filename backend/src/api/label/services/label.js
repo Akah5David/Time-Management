@@ -18,13 +18,13 @@ module.exports = createCoreService("api::label.label", ({ strapi }) => ({
       const createdLabel = await strapi.documents("api::label.label").create({
         data: labelBody,
         locale: "en",
-        fields: ["name", "color"],
         status: "published",
-        populate: ["tasks", "users_permission_user"],
+        fields: ["name", "color"],
+        populate: ["tasks", "users_permissions_user"],
       });
 
       if (!createdLabel) {
-        throw new Error("Failed to create a new label");
+        return {};
       }
 
       return createdLabel;
@@ -46,7 +46,7 @@ module.exports = createCoreService("api::label.label", ({ strapi }) => ({
           locale: "en",
           fields: ["name", "color"],
           status: "published",
-          populate: ["tasks", "users_permission_user"],
+          populate: ["tasks", "users_permissions_user"],
           pagination: {
             limit: 10,
             start: 0,
@@ -78,11 +78,11 @@ module.exports = createCoreService("api::label.label", ({ strapi }) => ({
         locale: "en",
         fields: ["name", "color"],
         status: "published",
-        populate: ["tasks", "users_permission_user"],
+        populate: ["tasks", "users_permissions_user"],
       });
 
       if (!fetchedLabel) {
-        throw new Error("Failed to fetch label");
+        return {};
       }
 
       return fetchedLabel;
@@ -92,24 +92,25 @@ module.exports = createCoreService("api::label.label", ({ strapi }) => ({
       throw new Error("Failed to fetch label");
     }
   },
-  async updateLabel(labelId, data) {
+  async updateLabel(labelId, body) {
     console.log(
       "===============Started running service updateLabel==============",
     );
 
     console.log("updateLabel labelId: ", labelId);
+    console.log("updateLabel body: ", body);
 
     try {
       const updatedLabel = await strapi.documents("api::label.label").update({
         documentId: labelId,
-        data,
+        data: body,
         fields: ["name", "color"],
         status: "published",
-        populate: ["tasks", "users_permission_user"],
+        populate: ["tasks", "users_permissions_user"],
       });
 
       if (!updatedLabel) {
-        throw new Error("Failed to update label");
+        return {};
       }
 
       return updatedLabel;
@@ -132,7 +133,7 @@ module.exports = createCoreService("api::label.label", ({ strapi }) => ({
       });
 
       if (!deletedLabel) {
-        throw new Error("Failed to delete label");
+        return {};
       }
 
       return deletedLabel;
@@ -164,6 +165,10 @@ module.exports = createCoreService("api::label.label", ({ strapi }) => ({
         });
 
         deletedLabels.push(deletedLabel);
+      }
+
+      if (deletedLabels.length === 0) {
+        return [];
       }
 
       return deletedLabels;

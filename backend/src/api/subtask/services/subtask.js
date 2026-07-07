@@ -8,7 +8,7 @@ const { createCoreService } = require("@strapi/strapi").factories;
 
 module.exports = createCoreService("api::subtask.subtask", ({ strapi }) => ({
   async createSubtask(formBody) {
-    console.log("createTask Service is running");
+    console.log("createTask Service is running", formBody);
 
     try {
       const createdSubtask = await strapi
@@ -20,6 +20,10 @@ module.exports = createCoreService("api::subtask.subtask", ({ strapi }) => ({
           status: "draft",
           populate: ["task"],
         });
+
+      if (!createdSubtask) {
+        return {};
+      }
 
       return createdSubtask;
     } catch (err) {
@@ -41,12 +45,16 @@ module.exports = createCoreService("api::subtask.subtask", ({ strapi }) => ({
           limit: 10,
           start: 0,
         },
-        filters: {
-          title: {
-            $startsWith: "b",
-          },
-        },
+        // filters: {
+        //   title: {
+        //     $startsWith: "b",
+        //   },
+        // },
       });
+
+      if (subtasks.length === 0) {
+        return [];
+      }
 
       return subtasks;
     } catch (err) {
@@ -62,9 +70,13 @@ module.exports = createCoreService("api::subtask.subtask", ({ strapi }) => ({
         documentId: documentId,
         locale: "en",
         fields: ["title", "completed"],
-        status: "published",
+        status: "draft",
         populate: ["task"],
       });
+
+      if (!subtask) {
+        return {};
+      }
 
       return subtask;
     } catch (err) {
@@ -91,7 +103,7 @@ module.exports = createCoreService("api::subtask.subtask", ({ strapi }) => ({
         });
 
       if (!updatedSubtask) {
-        throw new Error("Failed to update subtask");
+        return {};
       }
 
       return updatedSubtask;
@@ -116,7 +128,7 @@ module.exports = createCoreService("api::subtask.subtask", ({ strapi }) => ({
         });
 
       if (!deletedSubtask) {
-        throw new Error("Failed to delete subtask");
+        return {};
       }
 
       return deletedSubtask;

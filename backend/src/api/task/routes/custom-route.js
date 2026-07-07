@@ -32,7 +32,7 @@ module.exports = {
     },
     {
       method: "PUT",
-      path: "/tasks/:documentId",
+      path: "/tasks/update/:documentId",
       handler: "task.updateTask",
       config: {
         auth: false,
@@ -42,7 +42,7 @@ module.exports = {
     },
     {
       method: "DELETE",
-      path: "/tasks/:documentId",
+      path: "/tasks/delete/:documentId",
       handler: "task.deleteTask",
       config: {
         auth: false,
@@ -52,7 +52,7 @@ module.exports = {
     },
     {
       method: "DELETE",
-      path: "/tasks",
+      path: "/tasks/delete-all",
       handler: "task.deleteAllTasks",
       config: {
         auth: false,

@@ -16,7 +16,7 @@ module.exports = createCoreController("api::label.label", ({ strapi }) => ({
         .createLabel(ctx.request.body);
 
       if (!createdLabel) {
-        throw new Error("Failed to create label");
+        return ctx.notFound("No label was created");
       }
 
       ctx.body = createdLabel;
@@ -34,7 +34,7 @@ module.exports = createCoreController("api::label.label", ({ strapi }) => ({
         .fetchLabels();
 
       if (fetchedLabels.length === 0) {
-        throw new Error("Failed to fetch all labels");
+        return ctx.notFound("Failed to fetch all labels");
       }
 
       //returns fetchedLabels to the front end
@@ -48,13 +48,14 @@ module.exports = createCoreController("api::label.label", ({ strapi }) => ({
   async fetchLabel(ctx) {
     console.log("===============Started running fetchLabel==============");
 
+    console.log("label ID: ", ctx.params.id);
     try {
       let fetchedLabel = await strapi
         .service("api::label.label")
-        .fetchLabel(ctx.params.id);
+        .fetchLabel(ctx.params.documentId);
 
       if (!fetchedLabel) {
-        return ctx.notFound("Label not found");
+        return ctx.notFound("No Label found for update");
       }
 
       ctx.body = fetchedLabel;
@@ -63,19 +64,20 @@ module.exports = createCoreController("api::label.label", ({ strapi }) => ({
       throw err;
     }
   },
-  async updatelabel(ctx) {
-    console.log("===============Started running updatelabel==============");
+  async updateLabel(ctx) {
+    console.log("===============Started running updateLabel==============");
+    console.log("Update request Body: ", ctx.request.body);
 
     try {
-      let updatedlabel = await strapi
+      let updatedLabel = await strapi
         .service("api::label.label")
-        .updateLabel(ctx.params.id, ctx.request.body);
+        .updateLabel(ctx.params.documentId, ctx.request.body);
 
-      if (!updatedlabel) {
-        throw new Error("Failed to update the label");
+      if (!updatedLabel) {
+        return ctx.notFound("No Label found");
       }
 
-      ctx.body = updatedlabel;
+      ctx.body = updatedLabel;
     } catch (err) {
       console.log("updatelabel Error Message", err);
 
@@ -88,10 +90,10 @@ module.exports = createCoreController("api::label.label", ({ strapi }) => ({
     try {
       let deletedLabel = await strapi
         .service("api::label.label")
-        .deleteLabel(ctx.params.id);
+        .deleteLabel(ctx.params.documentId);
 
       if (!deletedLabel) {
-        throw new Error("Failed to delete the label");
+        return ctx.notfound("No Label Found");
       }
 
       ctx.body = deletedLabel;
@@ -110,7 +112,7 @@ module.exports = createCoreController("api::label.label", ({ strapi }) => ({
         .deleteAllLabels();
 
       if (!deletedLabels) {
-        throw new Error("Failed to delete all labels");
+        return ctx.notFound("No label found");
       }
 
       //returns createdLabel to the front end
