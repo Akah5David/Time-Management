@@ -1,0 +1,68 @@
+{
+  "version": "0.0.0",
+  "keywords": [],
+  "type": "commonjs",
+  "exports": {
+    "./package.json": "./package.json",
+    "./strapi-admin": {
+      "source": "./admin/src/index.js",
+      "import": "./dist/admin/index.mjs",
+      "require": "./dist/admin/index.js",
+      "default": "./dist/admin/index.js"
+    },
+    "./strapi-server": {
+      "source": "./server/src/index.js",
+      "import": "./dist/server/index.mjs",
+      "require": "./dist/server/index.js",
+      "default": "./dist/server/index.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "strapi-plugin build",
+    "watch": "strapi-plugin watch",
+    "watch:link": "strapi-plugin watch:link",
+    "verify": "strapi-plugin verify"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@strapi/sdk-plugin": "^6.1.1",
+    "prettier": "^3.9.4",
+    "@strapi/design-system": "^2.2.2",
+    "@strapi/icons": "^2.2.2",
+    "react-intl": "^6.8.9",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.30.4",
+    "styled-components": "^6.4.3"
+  },
+  "peerDependencies": {
+    "@strapi/strapi": "^5.50.1",
+    "@strapi/sdk-plugin": "^6.1.1",
+    "@strapi/design-system": "^2.2.2",
+    "@strapi/icons": "^2.2.2",
+    "react-intl": "^6.8.9",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.30.4",
+    "styled-components": "^6.4.3"
+  },
+  "strapi": {
+    "kind": "plugin",
+    "name": "productivity-center",
+    "displayName": "Productivity Center",
+    "description": "A center that contains all necessary frontend components and middlewares for my to-do-list project"
+  },
+  "name": "productivity-center",
+  "description": "A center that contains all necessary frontend components and middlewares for my to-do-list project",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com//Akah5David.git"
+  },
+  "bugs": {
+    "url": "https://github.com//Akah5David/issues"
+  },
+  "homepage": "https://github.com//Akah5David#readme",
+  "author": "David Akah <davidakah1999@gmail.com>"
+}

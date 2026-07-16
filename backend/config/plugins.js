@@ -42,6 +42,6 @@ module.exports = ({ env }) => ({
   },
   "productivity-centre": {
     enabled: true,
-    resolve: "./src/plugins/productivity-centre",
+    resolve: "./src/plugins/productivity-center",
   },
 });

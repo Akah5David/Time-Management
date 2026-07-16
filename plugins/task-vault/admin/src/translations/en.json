@@ -1,0 +1,12 @@
+{
+  "task-vault.plugin.name": "Task Vault",
+  "task-vault.settings.section-label": "Task Vault",
+  "task-vault.settings.analytics": "Task Vault",
+  "task-vault.settings.achievements": "Task Vault",
+  "task-vault.settings.conConfigurations": "Task Vault",
+  "task-vault.settings.reports": "Task Vault",
+  "task-vault.settings.productivityScoring": "Task Vault",
+  "task-vault.settings.notifications": "Task Vault",
+  "task-vault.settings.side-panel": "Task Vault",
+  "task-vault.settings.custom-link": "Task Vault"
+}

@@ -1,0 +1,69 @@
+{
+  "version": "0.0.0",
+  "keywords": [],
+  "type": "commonjs",
+  "exports": {
+    "./package.json": "./package.json",
+    "./strapi-admin": {
+      "source": "./admin/src/index.js",
+      "import": "./dist/admin/index.mjs",
+      "require": "./dist/admin/index.js",
+      "default": "./dist/admin/index.js"
+    },
+    "./strapi-server": {
+      "source": "./server/src/index.js",
+      "import": "./dist/server/index.mjs",
+      "require": "./dist/server/index.js",
+      "default": "./dist/server/index.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "strapi-plugin build",
+    "watch": "strapi-plugin watch",
+    "watch:link": "strapi-plugin watch:link",
+    "verify": "strapi-plugin verify"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@strapi/strapi": "*",
+    "@strapi/sdk-plugin": "*",
+    "prettier": "*",
+    "@strapi/design-system": "*",
+    "@strapi/icons": "*",
+    "react-intl": "*",
+    "react": "*",
+    "react-dom": "*",
+    "react-router-dom": "*",
+    "styled-components": "*"
+  },
+  "peerDependencies": {
+    "@strapi/strapi": "*",
+    "@strapi/sdk-plugin": "*",
+    "@strapi/design-system": "*",
+    "@strapi/icons": "*",
+    "react-intl": "*",
+    "react": "*",
+    "react-dom": "*",
+    "react-router-dom": "*",
+    "styled-components": "*"
+  },
+  "strapi": {
+    "kind": "plugin",
+    "name": "todo-list",
+    "displayName": "",
+    "description": ""
+  },
+  "name": "todo-list",
+  "description": "",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com//Akah5David.git"
+  },
+  "bugs": {
+    "url": "https://github.com//Akah5David/issues"
+  },
+  "homepage": "https://github.com//Akah5David#readme",
+  "author": "Akah5David <davidakah1999@gmail.com>"
+}

@@ -1,0 +1,8 @@
+{
+  "version": "v1",
+  "packages": {
+    "task-vault": {
+      "signature": "7d27f4f13529bf1495c3cf9382cc292f"
+    }
+  }
+}
