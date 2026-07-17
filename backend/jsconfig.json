@@ -1,8 +1,10 @@
 {
   "compilerOptions": {
-    "moduleResolution": "nodenext",
+    "moduleResolution": "bundler",
     "target": "ES2021",
+    "allowJs": true,
     "checkJs": true,
-    "allowJs": true
-  }
+    "jsx": "react-jsx"
+  },
+  "include": ["src"]
 }

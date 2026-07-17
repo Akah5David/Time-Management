@@ -5,14 +5,30 @@ import { PluginIcon } from './components/PluginIcon';
 import { taskActions } from './services/taskActions';
 import VaultSidePanel from './components/VaultSidePanel';
 import vaultSidePanel from './panel/VaultSidePanel';
-import vaultSideInjectionPanel from './panel/VaultInjectionPanel';
+import { HomePage } from './pages/HomePage';
 
 import RunCustomAction from './components/RunCustomAction';
 import OpenPreviewAction from './components/OpenPreviewAction';
 import BulkPublishAction from './components/BulkPublishAction';
+import pluginApi from './apis/pluginApi';
 
 export default {
   register(app) {
+    app.registerPlugin({
+      id: PLUGIN_ID,
+      name: PLUGIN_ID,
+      apis: pluginApi,
+      injectionZones: {
+        HomePage: {
+          top: [],
+          middle: [],
+          bottom: [],
+        },
+      },
+      initializer: Initializer,
+      isReady: false,
+    });
+
     app.addMenuLink({
       to: `plugins/${PLUGIN_ID}`,
       icon: PluginIcon,
@@ -22,13 +38,6 @@ export default {
       },
       Component: () => import('./pages/App'),
       permissions: [],
-    });
-
-    app.registerPlugin({
-      id: PLUGIN_ID,
-      initializer: Initializer,
-      isReady: false,
-      name: PLUGIN_ID,
     });
 
     app.addSettingsLink(
@@ -160,6 +169,28 @@ export default {
 
     // Injection zone (plugin-defined zone)
     app.getPlugin('content-manager').injectComponent('editView', 'right-links', {
+      name: `${PLUGIN_ID}.custom-link`,
+      Component: HomePage,
+    });
+
+    app.getPlugin('content-manager').injectComponent('listView', 'actions', {
+      name: `${PLUGIN_ID}.custom-link`,
+      Component: VaultSidePanel,
+    });
+    app.getPlugin('content-manager').injectComponent('listView', 'publishModalAdditionalInfos', {
+      name: `${PLUGIN_ID}.custom-link`,
+      Component: VaultSidePanel,
+    });
+    app.getPlugin('content-manager').injectComponent('listView', 'unpublishModalAdditionalInfos', {
+      name: `${PLUGIN_ID}.custom-link`,
+      Component: VaultSidePanel,
+    });
+    app.getPlugin('content-manager').injectComponent('listView', 'deleteModalAdditionalInfos', {
+      name: `${PLUGIN_ID}.custom-link`,
+      Component: VaultSidePanel,
+    });
+
+    app.getPlugin('content-manager').injectComponent('preview', 'actions', {
       name: `${PLUGIN_ID}.custom-link`,
       Component: VaultSidePanel,
     });
