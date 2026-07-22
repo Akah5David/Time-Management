@@ -35,16 +35,16 @@
       "required": true,
       "unique": false
     },
-    "tasks": {
-      "type": "relation",
-      "relation": "manyToMany",
-      "target": "api::task.task",
-      "inversedBy": "labels"
-    },
     "users_permissions_user": {
       "type": "relation",
       "relation": "manyToOne",
       "target": "plugin::users-permissions.user",
+      "inversedBy": "labels"
+    },
+    "projects": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::project.project",
       "inversedBy": "labels"
     }
   }

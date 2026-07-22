@@ -768,8 +768,8 @@ export interface ApiLabelLabel extends Struct.CollectionTypeSchema {
           localized: true;
         };
       }>;
+    projects: Schema.Attribute.Relation<'manyToMany', 'api::project.project'>;
     publishedAt: Schema.Attribute.DateTime;
-    tasks: Schema.Attribute.Relation<'manyToMany', 'api::task.task'>;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -796,13 +796,6 @@ export interface ApiProjectProject extends Struct.CollectionTypeSchema {
     };
   };
   attributes: {
-    color: Schema.Attribute.String &
-      Schema.Attribute.Required &
-      Schema.Attribute.SetPluginOptions<{
-        i18n: {
-          localized: true;
-        };
-      }>;
     createdAt: Schema.Attribute.DateTime;
     createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
       Schema.Attribute.Private;
@@ -819,6 +812,7 @@ export interface ApiProjectProject extends Struct.CollectionTypeSchema {
           localized: true;
         };
       }>;
+    labels: Schema.Attribute.Relation<'manyToMany', 'api::label.label'>;
     locale: Schema.Attribute.String;
     localizations: Schema.Attribute.Relation<
       'oneToMany',
@@ -1011,7 +1005,6 @@ export interface ApiTaskTask extends Struct.CollectionTypeSchema {
         };
       }> &
       Schema.Attribute.DefaultTo<0>;
-    labels: Schema.Attribute.Relation<'manyToMany', 'api::label.label'>;
     lists: Schema.Attribute.DynamicZone<
       ['spiritual.messages', 'task.gospel', 'task.details']
     > &

@@ -33,15 +33,6 @@
         }
       }
     },
-    "color": {
-      "type": "string",
-      "pluginOptions": {
-        "i18n": {
-          "localized": true
-        }
-      },
-      "required": true
-    },
     "startDate": {
       "type": "date",
       "pluginOptions": {
@@ -87,6 +78,12 @@
       "relation": "manyToOne",
       "target": "plugin::users-permissions.user",
       "inversedBy": "projects"
+    },
+    "labels": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::label.label",
+      "mappedBy": "projects"
     }
   }
 }

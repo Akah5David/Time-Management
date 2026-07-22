@@ -8,9 +8,8 @@ import { useEffect, useState } from 'react';
 import { getTranslation } from '../utils/getTranslation';
 
 import { CustomInjectionZone } from '../injection-zone-components/CustomInjectionZone';
-import SideBar from '../components/sidebar/SideBar';
 
-const HomePage = () => {
+const OldHomePage = () => {
   const { formatMessage } = useIntl();
   const admin_app = useSelector((state) => state.admin_app);
 
@@ -47,7 +46,6 @@ const HomePage = () => {
   return (
     <div>
       <h1>HomePage</h1>
-      {/* <SideBar /> */}
       {/* Render components injected into the top zone */}
       <CustomInjectionZone area="task-value.HomePage.top" />
       <br /> <br />{' '}
@@ -85,4 +83,4 @@ const HomePage = () => {
   );
 };
 
-export { HomePage };
+export { OldHomePage };

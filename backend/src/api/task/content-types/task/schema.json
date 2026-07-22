@@ -109,12 +109,6 @@
       "target": "plugin::users-permissions.user",
       "inversedBy": "tasks"
     },
-    "labels": {
-      "type": "relation",
-      "relation": "manyToMany",
-      "target": "api::label.label",
-      "mappedBy": "tasks"
-    },
     "project": {
       "type": "relation",
       "relation": "manyToOne",

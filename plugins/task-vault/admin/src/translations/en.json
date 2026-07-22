@@ -1,12 +1,13 @@
 {
-  "task-vault.plugin.name": "Task Vault",
-  "task-vault.settings.section-label": "Task Vault",
-  "task-vault.settings.analytics": "Task Vault",
-  "task-vault.settings.achievements": "Task Vault",
-  "task-vault.settings.conConfigurations": "Task Vault",
-  "task-vault.settings.reports": "Task Vault",
-  "task-vault.settings.productivityScoring": "Task Vault",
-  "task-vault.settings.notifications": "Task Vault",
-  "task-vault.settings.side-panel": "Task Vault",
-  "task-vault.settings.custom-link": "Task Vault"
+  "plugin.name": "Task Vault",
+  "settings.section-label": "Task Vault",
+  "settings.analytics": "Task Vault",
+  "settings.achievements": "Task Vault",
+  "settings.conConfigurations": "Task Vault",
+  "settings.reports": "Task Vault",
+  "settings.productivityScoring": "Task Vault",
+  "settings.notifications": "Task Vault",
+  "settings.side-panel": "Task Vault",
+  "settings.custom-link": "Task Vault",
+  "create": "Create Work"
 }

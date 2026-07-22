@@ -1,8 +1,9 @@
 import { getTranslation } from './utils/getTranslation';
+import { prefixPluginTranslations } from './utils/prefixPluginTranslations';
 import { PLUGIN_ID } from './pluginId';
 import { Initializer } from './components/Initializer';
 import { PluginIcon } from './components/PluginIcon';
-import { taskActions } from './services/taskActions';
+
 import VaultSidePanel from './components/VaultSidePanel';
 import vaultSidePanel from './panel/VaultSidePanel';
 import { HomePage } from './pages/HomePage';
@@ -11,6 +12,11 @@ import RunCustomAction from './components/RunCustomAction';
 import OpenPreviewAction from './components/OpenPreviewAction';
 import BulkPublishAction from './components/BulkPublishAction';
 import pluginApi from './apis/pluginApi';
+import taskVaultReducer from './redux-toolkit/taskVaultSlice';
+
+const reducers = {
+  'task-vault': taskVaultReducer,
+};
 
 export default {
   register(app) {
@@ -29,11 +35,19 @@ export default {
       isReady: false,
     });
 
+    //creates a Hook Id that external plugin can use to insert a component in task-vault Dasboard Page
+    app.createHook(`${PLUGIN_ID}/Dashboard/cards`);
+
+    app.createHook(`${PLUGIN_ID}/Dashboard/reminders`);
+    app.createHook(`${PLUGIN_ID}/Dashboard/subtasks`);
+
+    app.addReducers(reducers);
+
     app.addMenuLink({
       to: `plugins/${PLUGIN_ID}`,
       icon: PluginIcon,
       intlLabel: {
-        id: `${PLUGIN_ID}.plugin.name`,
+        id: getTranslation('plugin.name'),
         defaultMessage: PLUGIN_ID,
       },
       Component: () => import('./pages/App'),
@@ -44,14 +58,14 @@ export default {
       {
         id: 'task-vault',
         intlLabel: {
-          id: `${PLUGIN_ID}.settings.section-label`,
+          id: getTranslation('settings.section-label'),
           defaultMessage: 'Task Vault Plugin',
         },
       },
       [
         {
           intlLabel: {
-            id: `${PLUGIN_ID}.settings.cronConfigurations`,
+            id: getTranslation('settings.cronConfigurations'),
             defaultMessage: 'Cron Configuration',
           },
           id: 'cron',
@@ -64,7 +78,7 @@ export default {
         },
         {
           intlLabel: {
-            id: `${PLUGIN_ID}.settings.achievements`,
+            id: getTranslation('settings.achievements'),
             defaultMessage: 'Achievements',
           },
           id: 'achievements',
@@ -78,7 +92,7 @@ export default {
         },
         {
           intlLabel: {
-            id: `${PLUGIN_ID}.settings.analytics`,
+            id: getTranslation('settings.analytics'),
             defaultMessage: 'Analytics',
           },
           id: 'analytics',
@@ -91,7 +105,7 @@ export default {
         },
         {
           intlLabel: {
-            id: `${PLUGIN_ID}.settings.notifications`,
+            id: getTranslation('settings.notifications'),
             defaultMessage: 'Notification',
           },
           id: 'notifications',
@@ -105,7 +119,7 @@ export default {
         },
         {
           intlLabel: {
-            id: `${PLUGIN_ID}.settings.reports`,
+            id: getTranslation('settings.reports'),
             defaultMessage: 'Reports',
           },
           id: 'reports',
@@ -119,7 +133,7 @@ export default {
         },
         {
           intlLabel: {
-            id: `${PLUGIN_ID}.settings.productivityScoring`,
+            id: getTranslation('settings.productivityScoring'),
             defaultMessage: 'Productivity SvaultSideInjectionPanelcoring',
           },
           id: 'productivityScoring',
@@ -133,7 +147,7 @@ export default {
         },
         {
           intlLabel: {
-            id: `${PLUGIN_ID}.settings.maintenance`,
+            id: getTranslation('ettings.maintenances'),
             defaultMessage: 'Maintenance',
           },
           id: 'maintenance',
@@ -197,23 +211,24 @@ export default {
   },
 
   async registerTrads({ locales }) {
-    return Promise.all(
-      locales.map(async (locale) => {
-        try {
-          const { default: data } = await import(`./translations/${locale}.json`);
-
-          const newData = {};
-          const keys = Object.keys(data);
-
-          for (const key of keys) {
-            newData[getTranslation(key)] = data[key];
-          }
-
-          return { data: newData, locale };
-        } catch {
-          return { data: {}, locale };
-        }
+    const importedTranslations = await Promise.all(
+      locales.map((locale) => {
+        return import(`./translations/${locale}.json`)
+          .then(({ default: data }) => {
+            return {
+              data: prefixPluginTranslations(data, PLUGIN_ID),
+              locale,
+            };
+          })
+          .catch(() => {
+            return {
+              data: {},
+              locale,
+            };
+          });
       })
     );
+
+    return importedTranslations;
   },
 };

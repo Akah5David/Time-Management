@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Typography } from '@strapi/design-system';
+import { Box, Button, Flex, Typography, Link } from '@strapi/design-system';
 import {useState} from "react";
 
 export default function VaultSidePanel() {
